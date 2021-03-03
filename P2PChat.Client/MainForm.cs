@@ -8,8 +8,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using P2PChat.Client.Packets;
-using P2PChat.Reciever;
+using P2PChat.Client.Properties;
+using System.Net.Sockets;
 
 namespace P2PChat.Client
 {
@@ -26,7 +26,10 @@ namespace P2PChat.Client
 			InitializeComponent();
 			this.self = self;
 			userNameLabel.Text = self.Nickname;
-			_serverIP = new IPEndPoint(IPAddress.Loopback, 3434);
+
+			var settings = new Settings();
+			var address = Dns.GetHostAddresses(settings.StanHost).Where(ip => ip.AddressFamily == AddressFamily.InterNetwork).First();
+			_serverIP = new IPEndPoint(address, 3434);
 			_client = new Client(Guid.NewGuid(), _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
 			_setUsers(_client.Users);

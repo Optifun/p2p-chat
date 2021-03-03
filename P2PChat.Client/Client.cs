@@ -51,6 +51,7 @@ namespace P2PChat.Client
 
 		public Client (Guid userId, IPEndPoint stanServerIP, int refreshInterval, SynchronizationContext ctx)
 		{
+			
 			_selfId = userId;
 			_stanIP = stanServerIP;
 			_refreshMs = refreshInterval;
