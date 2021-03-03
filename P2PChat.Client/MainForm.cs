@@ -78,7 +78,8 @@ namespace P2PChat.Client
 		private void chatList_SelectedIndexChanged (object sender, EventArgs e)
 		{
 			var index = chatList.SelectedIndex;
-			_selected = _users[index];
+			if ( index >= 0 )
+				_selected = _users[index];
 		}
 	}
 }
