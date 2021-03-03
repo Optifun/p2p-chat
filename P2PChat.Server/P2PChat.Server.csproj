@@ -10,4 +10,8 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\P2PChat.Client\P2PChat.Client.csproj" />
+  </ItemGroup>
+
 </Project>
