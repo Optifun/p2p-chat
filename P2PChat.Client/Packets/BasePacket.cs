@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace P2PChat.Client.Packets
+namespace P2PChat.Packets
 {
 	[Serializable]
 	public abstract class BasePacket : IPacket

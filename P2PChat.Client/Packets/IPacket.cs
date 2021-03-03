@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace P2PChat.Client.Packets
+namespace P2PChat.Packets
 {
 	interface IPacket
 	{

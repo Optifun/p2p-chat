@@ -10,7 +10,33 @@ namespace P2PChat
 	{
 		public Guid UserID;
 		public string Nickname;
+		[NonSerialized]
 		public IPEndPoint Address;
+		public string StrAddress;
+		public int port;
+
+		public PublicUser ()
+		{
+			UserID = Guid.NewGuid();
+		}
+
+		public PublicUser (IPAddress ip, int port, Guid id, string nickname)
+		{
+			UserID = id;
+			Nickname = nickname;
+			StrAddress = ip.ToString();
+			this.port = port;
+			Address = new IPEndPoint(IPAddress.Parse(StrAddress), this.port);
+		}
+
+		public PublicUser (IPEndPoint ip, Guid id, string nickname)
+		{
+			UserID = id;
+			Nickname = nickname;
+			StrAddress = ip.Address.ToString();
+			port = ip.Port;
+			Address = ip;
+		}
 
 		public override string ToString ()
 		{

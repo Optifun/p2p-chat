@@ -10,31 +10,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using P2PChat.Reciever;
 using P2PChat.Client.Routes;
-using P2PChat.Client.Packets;
+using P2PChat.Packets;
 
 namespace P2PChat.Client
 {
 	public class Client
 	{
-		static BinaryFormatter _fmt = new BinaryFormatter();
-
 		public event Action<List<PublicUser>> UsersUpdated;
 		public event Action<Message> MessageRecieved;
 		int _clientPort = 7676;
 
 		public List<PublicUser> Users = new List<PublicUser>
 		{
-			new PublicUser(){
-				Address = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7676),
-				UserID = Guid.NewGuid(),
-				Nickname = "User 1"
-			},
-			new PublicUser()
-			{
-				Address = new IPEndPoint(IPAddress.Loopback, 7687),
-				UserID = Guid.NewGuid(),
-				Nickname = "User 2"
-			}
+			new PublicUser(
+				new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7676),
+				Guid.NewGuid(),
+				"User 1"),
+			new PublicUser(
+				new IPEndPoint(IPAddress.Loopback, 7687),
+				Guid.NewGuid(),
+				"User 2")
 		};
 
 		private UdpClient _client;
@@ -51,13 +46,12 @@ namespace P2PChat.Client
 
 		public Client (Guid userId, IPEndPoint stanServerIP, int refreshInterval, SynchronizationContext ctx)
 		{
-			
+
 			_selfId = userId;
 			_stanIP = stanServerIP;
 			_refreshMs = refreshInterval;
 			userObserver = new UserObserver();
 			messageObserver = new MessageObserver(_selfId);
-			//observer = new UDPObserver(new IPEndPoint(IPAddress.Any, _clientPort), ctx, userObserver.Compose(messageObserver));
 			observer = new UDPObserver(_clientPort, ctx, userObserver.Compose(messageObserver));
 			_client = new UdpClient(AddressFamily.InterNetwork);
 		}
@@ -77,9 +71,7 @@ namespace P2PChat.Client
 
 			// если клиент будет принимать пакеты от пиров и сервера
 			// рандомно в разных местах, то надо будет делать роутер
-			MemoryStream stream = new MemoryStream();
-			_fmt.Serialize(stream, msg);
-			var buffer = stream.ToArray();
+			var buffer = msg.ToBytes();
 			_client.Send(buffer, buffer.Length, receiver.Address);
 			return msg;
 		}

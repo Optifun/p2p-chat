@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace P2PChat.Reciever
 {
-	class UDPObserver
+	public class UDPObserver
 	{
 		readonly UdpClient _client;
 		SynchronizationContext _synchronization;

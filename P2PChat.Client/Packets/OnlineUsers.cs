@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using P2PChat.Reciever;
 
-namespace P2PChat.Client.Packets
+namespace P2PChat.Packets
 {
 	public enum FetchAction
 	{

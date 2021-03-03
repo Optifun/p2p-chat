@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P2PChat.Reciever
 {
-	class AbstractRoute : IRoute
+	public class AbstractRoute : IRoute
 	{
 		private IRoute _next;
 		public virtual Action Handle (Packet packet)
