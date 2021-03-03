@@ -25,7 +25,7 @@ namespace P2PChat.Reciever
 			IRoute temp = _next ?? this;
 			foreach ( var route in routes )
 				temp = temp.SetNext(route);
-			return temp;
+			return this;
 		}
 	}
 }
