@@ -28,7 +28,10 @@ namespace P2PChat.Client
 			userNameLabel.Text = self.Nickname;
 
 			var settings = new Settings();
-			var address = Dns.GetHostAddresses(settings.StanHost).Where(ip => ip.AddressFamily == AddressFamily.InterNetwork).First();
+			var address = Dns.GetHostAddresses(settings.StanHost)
+				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
+				.Skip(1)
+				.First();
 			_serverIP = new IPEndPoint(address, 3434);
 			_client = new Client(Guid.NewGuid(), _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
