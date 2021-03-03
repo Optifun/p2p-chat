@@ -17,12 +17,20 @@ namespace P2PChat.Reciever
 		CancellationTokenSource _tokenSource;
 		IRoute _routes;
 
-		int _port;
-		IPEndPoint _mask;
+		//int _port;
+		//IPEndPoint _mask;
+
+
+		public UDPObserver (int port, SynchronizationContext context, IRoute routeChain)
+		{
+			_synchronization = context;
+			_routes = routeChain;
+			_client = new UdpClient(port);
+		}
 
 		public UDPObserver (IPEndPoint mask, SynchronizationContext context, IRoute routeChain)
 		{
-			_mask = mask;
+			//TODO: можно заменить маску на порт на который будут приходить сообщения
 			_synchronization = context;
 			_routes = routeChain;
 			_client = new UdpClient(mask);
