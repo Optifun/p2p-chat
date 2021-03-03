@@ -14,9 +14,10 @@ namespace P2PChat.Client
 		[STAThread]
 		static void Main ()
 		{
+			var user = new PublicUser() { Nickname = "Nick", UserID = Guid.NewGuid() };
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
+			Application.Run(new MainForm(user));
 		}
 	}
 }

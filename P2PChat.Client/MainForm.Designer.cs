@@ -32,17 +32,20 @@
 			this.usernamePanel = new System.Windows.Forms.Panel();
 			this.userNameLabel = new System.Windows.Forms.Label();
 			this.chatPanel = new System.Windows.Forms.Panel();
+			this.messageLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.chatboxPanel = new System.Windows.Forms.Panel();
 			this.button1 = new System.Windows.Forms.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.chatList = new System.Windows.Forms.ListBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.onlineList = new System.Windows.Forms.ListView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.chatList = new System.Windows.Forms.ListBox();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.usernamePanel.SuspendLayout();
+			this.chatPanel.SuspendLayout();
 			this.chatboxPanel.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -51,6 +54,7 @@
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -91,11 +95,22 @@
 			// 
 			// chatPanel
 			// 
+			this.chatPanel.Controls.Add(this.panel1);
 			this.chatPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.chatPanel.Location = new System.Drawing.Point(3, 48);
 			this.chatPanel.Name = "chatPanel";
 			this.chatPanel.Size = new System.Drawing.Size(488, 320);
 			this.chatPanel.TabIndex = 1;
+			// 
+			// messageLayout
+			// 
+			this.messageLayout.AutoSize = true;
+			this.messageLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.messageLayout.Location = new System.Drawing.Point(22, 20);
+			this.messageLayout.Name = "messageLayout";
+			this.messageLayout.Size = new System.Drawing.Size(440, 287);
+			this.messageLayout.TabIndex = 0;
+			this.messageLayout.WrapContents = false;
 			// 
 			// chatboxPanel
 			// 
@@ -126,6 +141,7 @@
 			this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.textBox1.Location = new System.Drawing.Point(8, 8);
 			this.textBox1.Margin = new System.Windows.Forms.Padding(8);
+			this.textBox1.MaxLength = 200;
 			this.textBox1.Multiline = true;
 			this.textBox1.Name = "textBox1";
 			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -153,6 +169,17 @@
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Chats";
 			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// chatList
+			// 
+			this.chatList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.chatList.FormattingEnabled = true;
+			this.chatList.ItemHeight = 16;
+			this.chatList.Location = new System.Drawing.Point(3, 3);
+			this.chatList.Name = "chatList";
+			this.chatList.Size = new System.Drawing.Size(282, 411);
+			this.chatList.TabIndex = 0;
+			this.chatList.SelectedIndexChanged += new System.EventHandler(this.chatList_SelectedIndexChanged);
 			// 
 			// tabPage2
 			// 
@@ -196,16 +223,15 @@
 			this.splitContainer1.SplitterWidth = 2;
 			this.splitContainer1.TabIndex = 3;
 			// 
-			// chatList
+			// panel1
 			// 
-			this.chatList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.chatList.FormattingEnabled = true;
-			this.chatList.ItemHeight = 16;
-			this.chatList.Location = new System.Drawing.Point(3, 3);
-			this.chatList.Name = "chatList";
-			this.chatList.Size = new System.Drawing.Size(282, 411);
-			this.chatList.TabIndex = 0;
-			this.chatList.SelectedIndexChanged += new System.EventHandler(this.chatList_SelectedIndexChanged);
+			this.panel1.AutoScroll = true;
+			this.panel1.Controls.Add(this.messageLayout);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(488, 320);
+			this.panel1.TabIndex = 0;
 			// 
 			// MainForm
 			// 
@@ -219,6 +245,7 @@
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.usernamePanel.ResumeLayout(false);
 			this.usernamePanel.PerformLayout();
+			this.chatPanel.ResumeLayout(false);
 			this.chatboxPanel.ResumeLayout(false);
 			this.chatboxPanel.PerformLayout();
 			this.tabControl1.ResumeLayout(false);
@@ -228,6 +255,8 @@
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -247,5 +276,7 @@
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.ListBox chatList;
+		private System.Windows.Forms.FlowLayoutPanel messageLayout;
+		private System.Windows.Forms.Panel panel1;
 	}
 }

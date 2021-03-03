@@ -67,12 +67,12 @@ namespace P2PChat.Client
 			_startFetching();
 		}
 
-		public void Send (Guid userId, string text)
+		public Message Send (Guid userId, string text)
 		{
 			Message msg = new Message(_selfId, userId, text);
 			var receiver = Users.Find(user => user.UserID == userId);
 			if ( receiver == null )
-				return;
+				return null;
 
 			// если клиент будет принимать пакеты от пиров и сервера
 			// рандомно в разных местах, то надо будет делать роутер
@@ -80,6 +80,7 @@ namespace P2PChat.Client
 			_fmt.Serialize(stream, msg);
 			var buffer = stream.ToArray();
 			_client.Send(buffer, buffer.Length, receiver.Address);
+			return msg;
 		}
 
 		private async void _startFetching ()
