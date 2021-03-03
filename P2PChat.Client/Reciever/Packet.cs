@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace P2PChat.Reciever
 {
 	[Serializable]
-	class Packet
+	public class Packet
 	{
 		public readonly byte[] Data;
 		public readonly IPEndPoint Sender;
