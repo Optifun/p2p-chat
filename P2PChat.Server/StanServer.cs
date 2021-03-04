@@ -15,7 +15,7 @@ namespace P2PChat.Server
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
 		int _clientPort = 7676;
-		int _serverPort = 3434;
+		int _serverPort = 23434;
 
 		public Dictionary<IPAddress, PublicUser> Users = new Dictionary<IPAddress, PublicUser>();
 
@@ -80,11 +80,14 @@ namespace P2PChat.Server
 				_peers.Clear();
 			}
 
-			_synchronization.Post((_) =>
-			{
-				foreach ( var user in Users )
-					Console.WriteLine($"{user.Key}:{user.Value}");
-			}, null);
+			if ( Users.Count() > 0 )
+				_synchronization.Post((_) =>
+				{
+					Console.WriteLine("------");
+					foreach ( var user in Users )
+						Console.WriteLine($"{user.Key}:{user.Value}");
+					Console.WriteLine("------");
+				}, null);
 
 			var packet = new OnlineUsers(online, FetchAction.Responce);
 			var buffer = packet.ToBytes();

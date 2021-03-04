@@ -38,6 +38,7 @@ namespace P2PChat.Reciever
 
 		public void Start ()
 		{
+			_synchronization.Post((_) => Console.WriteLine("UDPObserver started"), null);
 			Stop();
 			_tokenSource = new CancellationTokenSource();
 			_token = _tokenSource.Token;

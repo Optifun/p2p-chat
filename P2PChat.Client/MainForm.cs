@@ -36,7 +36,7 @@ namespace P2PChat.Client
 			else
 				throw new WebException("Can not resolve Host");
 
-			_serverIP = new IPEndPoint(address, 3434);
+			_serverIP = new IPEndPoint(address, 23434);
 			_client = new Client(Guid.NewGuid(), _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
 			_setUsers(_client.Users);
