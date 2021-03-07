@@ -19,9 +19,9 @@ namespace P2PChat.Server
 		int _clientPort = 7676;
 		int _serverPort = 23434;
 
-		public Dictionary<IPAddress, PublicUser> Users = new Dictionary<IPAddress, PublicUser>();
+		public Dictionary<IPEndPoint, PublicUser> Users = new Dictionary<IPEndPoint, PublicUser>();
 
-		private Dictionary<IPAddress, PublicUser> _peers = new Dictionary<IPAddress, PublicUser>();
+		private Dictionary<IPEndPoint, PublicUser> _peers = new Dictionary<IPEndPoint, PublicUser>();
 
 		private int _refreshMs;
 
@@ -82,6 +82,7 @@ namespace P2PChat.Server
 
 		private void _addRequestToQueue (IPEndPoint peer)
 		{
+			// TODO: переписать с авторизацией
 			//var user = Users[peer.Address];
 			//if ( user is not null )
 			lock ( _peers )

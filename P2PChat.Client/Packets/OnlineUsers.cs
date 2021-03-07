@@ -22,11 +22,18 @@ namespace P2PChat.Packets
 	{
 		public List<PublicUser> Users { get; protected set; }
 		public FetchAction Action { get; protected set; }
+		public int Port { get; protected set; }
 
 		public OnlineUsers (List<PublicUser> list, FetchAction action)
 		{
 			Users = list;
 			Action = action;
+		}
+		public OnlineUsers (List<PublicUser> list, FetchAction action, int port)
+		{
+			Users = list;
+			Action = action;
+			Port = port;
 		}
 
 		public static OnlineUsers Parse (Packet packet)

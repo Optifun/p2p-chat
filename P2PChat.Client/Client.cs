@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using P2PChat.Reciever;
 using P2PChat.Client.Routes;
 using P2PChat.Packets;
+using Open.Nat;
+using System.Diagnostics;
 
 namespace P2PChat.Client
 {
@@ -18,7 +20,7 @@ namespace P2PChat.Client
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
 		public event Action<Message> MessageRecieved;
-		int _clientPort = 7676;
+		int _clientPort = 0;
 
 		public List<PublicUser> Users = new List<PublicUser>
 		{
@@ -53,13 +55,50 @@ namespace P2PChat.Client
 			userObserver = new UserObserver();
 			messageObserver = new MessageObserver(_selfId);
 			observer = new UDPObserver(_clientPort, ctx, userObserver.Compose(messageObserver));
-			_client = new UdpClient(AddressFamily.InterNetwork);
 		}
 
 
 		public void Listen ()
 		{
+			//Ассинхронно находит подходящий порт и открывает его
+			OpenPort().Wait();
+			Debug.WriteLine(_clientPort);
+			_client = new UdpClient(_clientPort, AddressFamily.InterNetwork);
 			_startFetching();
+		}
+
+		public async Task OpenPort()
+		{
+			var discoverer = new NatDiscoverer();
+			var cts = new CancellationTokenSource(10000);
+			var device = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+
+			//Занятые udp порты
+			List<int> busyUdpPorts = new List<int>();
+
+			//Нахождение всех занятых портов (публичных и приватных)
+			var mappings = await device.GetAllMappingsAsync();
+			foreach (var mapping in mappings)
+			{
+				if (mapping.Protocol == Protocol.Udp)
+				{
+					Debug.WriteLine(mapping);
+					busyUdpPorts.Add(mapping.PrivatePort);
+					busyUdpPorts.Add(mapping.PublicPort);
+				}
+			}
+
+			//Нахождение свободного порта
+			Random random = new Random();
+			int availablePort = random.Next(30000, 70000);
+			while (busyUdpPorts.Contains(availablePort))
+			{
+				availablePort = random.Next(30000, 70000);
+			}
+
+			_clientPort = availablePort;
+
+			await device.CreatePortMapAsync(new Mapping(Protocol.Udp, _clientPort, _clientPort, "P2P_Chat_User"));
 		}
 
 		public Message Send (Guid userId, string text)
@@ -105,7 +144,7 @@ namespace P2PChat.Client
 
 		private void _fetchUsers ()
 		{
-			var packet = new OnlineUsers(new List<PublicUser>(), FetchAction.Fetch);
+			var packet = new OnlineUsers(new List<PublicUser>(), FetchAction.Fetch, _clientPort);
 			var buffer = packet.ToBytes();
 			_client.Send(buffer, buffer.Length, _stanIP);
 		}
