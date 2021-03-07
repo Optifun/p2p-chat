@@ -100,6 +100,9 @@
     <Compile Include="Reciever\Packet.cs" />
     <Compile Include="Reciever\UDPObserver.cs" />
     <Compile Include="Routes\UserObserver.cs" />
+    <EmbeddedResource Include="AuthForm.resx">
+      <DependentUpon>AuthForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
