@@ -14,6 +14,7 @@ namespace P2PChat.Server.Resolver
 	class Authentification : AbstractRoute
 	{
 		public event Action<AuthAction, IPEndPoint> AuthRequested;
+
 		UserDb Db;
 
 		public Authentification (UserDb db)
@@ -24,11 +25,12 @@ namespace P2PChat.Server.Resolver
 		public override Action Handle (Packet packet)
 		{
 			var authPacket = AuthAction.Parse(packet);
-			if ( authPacket == null || authPacket.Action == AuthType.Null )
+			if ( authPacket == null || authPacket.Action == AuthType.Null || authPacket.OpenPort==null )
 				return base.Handle(packet);
 
+			int port = authPacket.OpenPort ?? 0;
 			var responce = resolveAuthAction(authPacket);
-			return () => AuthRequested?.Invoke(responce, packet.Sender);
+			return () => AuthRequested?.Invoke(responce, new IPEndPoint(packet.Sender.Address, port));
 		}
 
 		private AuthAction resolveAuthAction (AuthAction request)

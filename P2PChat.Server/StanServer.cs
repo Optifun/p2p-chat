@@ -69,6 +69,13 @@ namespace P2PChat.Server
 
 		private void sendAuthResponce (AuthAction responce, IPEndPoint sender)
 		{
+			if ( responce.Action == AuthType.Success )
+			{
+				var entry = userDb.SearchByNickname(responce.Nickname);
+				var user = new PublicUser(sender, entry.UserID, entry.Nickname);
+				Users.Add(sender.Address, user);
+			}
+
 			var buffer = responce.ToBytes();
 			_client.Send(buffer, buffer.Length, sender);
 		}

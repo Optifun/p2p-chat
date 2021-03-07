@@ -27,16 +27,23 @@ namespace P2PChat.Packets
 		public string Password { get; protected set; }
 		public AuthType Action { get; protected set; }
 
-		public AuthAction (string nickname, string password, AuthType action) : this(null, nickname, password, action)
+		public int? OpenPort { get; protected set; }
+
+		public AuthAction (string nickname, string password, AuthType action) : this(null, nickname, password, action, null)
 		{
 		}
 
-		public AuthAction (Guid? id, string nickname, string password, AuthType action)
+		public AuthAction (string nickname, string password, AuthType action, int port) : this(null, nickname, password, action, port)
+		{
+		}
+
+		public AuthAction (Guid? id, string nickname, string password, AuthType action, int? port=null)
 		{
 			Id = id;
 			Nickname = nickname;
 			Password = password;
 			Action = action;
+			OpenPort = port;
 		}
 
 		public static AuthAction Parse (Packet packet)
@@ -44,7 +51,7 @@ namespace P2PChat.Packets
 			MemoryStream stream = new MemoryStream(packet.Data);
 			var _packet = _fmt.Deserialize(stream) as AuthAction;
 
-			if ( _packet is null || _packet.Nickname == null || _packet.Password==null)
+			if ( _packet == null || _packet.Nickname == null || _packet.Password == null )
 				return null;
 
 			return _packet;
