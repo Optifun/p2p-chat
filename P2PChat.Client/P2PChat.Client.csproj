@@ -86,6 +86,7 @@
     <Compile Include="MessageBubble.Designer.cs">
       <DependentUpon>MessageBubble.cs</DependentUpon>
     </Compile>
+    <Compile Include="Packets\AuthAction.cs" />
     <Compile Include="Packets\BasePacket.cs" />
     <Compile Include="Packets\IPacket.cs" />
     <Compile Include="Packets\Message.cs" />

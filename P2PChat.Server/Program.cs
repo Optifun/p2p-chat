@@ -13,7 +13,6 @@ namespace P2PChat.Server
 	{
 		static int authServerPort = 1442;
 		static Thread AuthServer;
-		static Auth AuthModel;
 		static SynchronizationContext context;
 		static StanServer server;
 
@@ -40,10 +39,6 @@ namespace P2PChat.Server
 
 			while ( Console.ReadKey().Key != ConsoleKey.Q )
 				Thread.Sleep(100);
-			//AuthServer = new Thread(() =>
-			//{
-			//	AuthModel.Start(authServerPort, context);
-			//});
 		}
 	}
 }

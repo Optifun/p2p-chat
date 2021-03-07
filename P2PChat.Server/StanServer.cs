@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using P2PChat.Packets;
 using P2PChat.Reciever;
 using P2PChat.Server.Resolver;
+using P2PChat.Server.Db;
+
 namespace P2PChat.Server
 {
 	class StanServer
@@ -23,31 +25,38 @@ namespace P2PChat.Server
 
 		private int _refreshMs;
 
-		private UdpClient _client;
+		private UserDb userDb;
 
+		private UdpClient _client;
 		private UDPObserver observer;
 		private UsersOnline userResolver;
+		private Authentification authresolver;
 		private SynchronizationContext _synchronization;
 
 		public StanServer (int refreshInterval, SynchronizationContext ctx)
 		{
 			_synchronization = ctx;
 			_refreshMs = refreshInterval;
+			userDb = new UserDb();
 			userResolver = new UsersOnline();
-			observer = new UDPObserver(_serverPort, ctx, userResolver);
+			authresolver = new Authentification(userDb);
+
+			var routes = authresolver.Compose(userResolver);
+			observer = new UDPObserver(_serverPort, ctx, routes);
 			_client = new UdpClient(AddressFamily.InterNetwork);
 		}
 
 		public void Start ()
 		{
 			_startFetching();
-
 		}
 
 		private async void _startFetching ()
 		{
 			Task.Factory.StartNew(observer.Start);
 			userResolver.UsersRequested += _addRequestToQueue;
+			authresolver.AuthRequested += sendAuthResponce;
+
 			while ( true )
 			{
 				await Task.Factory.StartNew(() =>
@@ -56,6 +65,12 @@ namespace P2PChat.Server
 					Thread.Sleep(_refreshMs);
 				});
 			}
+		}
+
+		private void sendAuthResponce (AuthAction responce, IPEndPoint sender)
+		{
+			var buffer = responce.ToBytes();
+			_client.Send(buffer, buffer.Length, sender);
 		}
 
 		private void _addRequestToQueue (IPEndPoint peer)
