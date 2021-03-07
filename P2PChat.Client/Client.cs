@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace P2PChat.Client
 {
-	public class Client
+	public class Client : IDisposable
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
 		public event Action<Message> MessageRecieved;
@@ -48,7 +48,6 @@ namespace P2PChat.Client
 
 		public Client (Guid userId, IPEndPoint stanServerIP, int refreshInterval, SynchronizationContext ctx)
 		{
-
 			_selfId = userId;
 			_stanIP = stanServerIP;
 			_refreshMs = refreshInterval;
@@ -58,10 +57,10 @@ namespace P2PChat.Client
 		}
 
 
-		public void Listen ()
+		public async void Listen ()
 		{
 			//Ассинхронно находит подходящий порт и открывает его
-			OpenPort().Wait();
+			await OpenPort();
 			Debug.WriteLine(_clientPort);
 			_client = new UdpClient(_clientPort, AddressFamily.InterNetwork);
 			_startFetching();
@@ -90,10 +89,10 @@ namespace P2PChat.Client
 
 			//Нахождение свободного порта
 			Random random = new Random();
-			int availablePort = random.Next(30000, 70000);
+			int availablePort = random.Next(30000, 65535);
 			while (busyUdpPorts.Contains(availablePort))
 			{
-				availablePort = random.Next(30000, 70000);
+				availablePort = random.Next(30000, 65535);
 			}
 
 			_clientPort = availablePort;
@@ -149,5 +148,12 @@ namespace P2PChat.Client
 			_client.Send(buffer, buffer.Length, _stanIP);
 		}
 
+		public void Dispose()
+		{
+			var discoverer = new NatDiscoverer();
+			var cts = new CancellationTokenSource(10000);
+			var device = discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts).Result;
+			device.DeletePortMapAsync(new Mapping(Protocol.Udp, _clientPort, _clientPort));
+		}
 	}
 }

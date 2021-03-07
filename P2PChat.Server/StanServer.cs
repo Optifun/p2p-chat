@@ -87,8 +87,8 @@ namespace P2PChat.Server
 			//if ( user is not null )
 			lock ( _peers )
 			{
-				if ( !_peers.ContainsKey(peer.Address) )
-					_peers.Add(peer.Address, new PublicUser());
+				if ( !_peers.ContainsKey(peer) )
+					_peers.Add(peer, new PublicUser());
 			}
 		}
 
@@ -115,7 +115,7 @@ namespace P2PChat.Server
 			var packet = new OnlineUsers(online, FetchAction.Responce);
 			var buffer = packet.ToBytes();
 			foreach ( var host in hosts )
-				_client.Send(buffer, buffer.Length, new IPEndPoint(host, _clientPort));
+				_client.Send(buffer, buffer.Length, host);
 
 		}
 	}
