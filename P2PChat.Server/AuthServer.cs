@@ -38,7 +38,7 @@ namespace P2PChat.Server
 
 		public void Stop ()
 		{
-			if ( _tokenSource is not null )
+			if ( _tokenSource != null )
 				_tokenSource.Cancel();
 		}
 
@@ -89,7 +89,7 @@ namespace P2PChat.Server
 		{
 			var entry = Db.SearchByNickname(packet.Nickname);
 			Packet responce;
-			if ( entry is not null )
+			if ( entry != null )
 			{
 				responce = new WrongCredentials(packet.Nickname, packet.Password);
 			}
@@ -115,7 +115,7 @@ namespace P2PChat.Server
 		{
 			var entry = Db.SearchByNickname(packet.Nickname);
 			Packet responce;
-			if ( entry is not null )
+			if ( entry != null )
 			{
 				if ( entry.PasswordHash == packet.Password && entry.Nickname == packet.Nickname )
 					responce = new Success(entry.UserID, entry.Nickname, entry.PasswordHash);

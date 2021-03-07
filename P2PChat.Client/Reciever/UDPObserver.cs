@@ -47,7 +47,7 @@ namespace P2PChat.Reciever
 
 		public void Stop ()
 		{
-			if ( _tokenSource is not null )
+			if ( _tokenSource != null )
 				_tokenSource.Cancel();
 		}
 

@@ -11,7 +11,7 @@ namespace P2PChat.Reciever
 		private IRoute _next;
 		public virtual Action Handle (Packet packet)
 		{
-			return _next is not null ? _next.Handle(packet) : null;
+			return _next != null ? _next.Handle(packet) : null;
 		}
 
 		public virtual IRoute SetNext (IRoute route)
