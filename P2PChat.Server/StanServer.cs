@@ -36,10 +36,11 @@ namespace P2PChat.Server
 		{
 			_synchronization = ctx;
 			_refreshMs = refreshInterval;
+			var blackHole = new UndefinedResolver();
 			userResolver = new UsersOnline();
 			authresolver = new Authentification();
 
-			var routes = authresolver.Compose(userResolver);
+			var routes = authresolver.Compose(userResolver, blackHole);
 			observer = new UDPObserver(_serverPort, ctx, routes);
 			_client = new UdpClient(AddressFamily.InterNetwork);
 		}
@@ -93,21 +94,24 @@ namespace P2PChat.Server
 
 		private void _sendUserInfo ()
 		{
-			if ( _peers.Count() > 0 )
-				_synchronization.Post((_) =>
-				{
-					Console.WriteLine("------");
-					foreach ( var user in _peers )
-						Console.WriteLine($"{user.Key}:{user.Value}");
-					Console.WriteLine("------");
-				}, null);
+			if ( _peers.Count() == 0 )
+				return;
 
 			var online = _peers.Values.ToList();
 			var hosts = _peers.Keys.ToList();
+
 			lock ( _peers )
 			{
 				_peers.Clear();
 			}
+
+			_synchronization.Post((_) =>
+			{
+				Console.WriteLine("------");
+				for ( int i = 0; i < online.Count(); i++ )
+					Console.WriteLine($"{hosts[i]}:{online[i]}");
+				Console.WriteLine("------");
+			}, null);
 
 			var packet = new OnlineUsers(online, FetchAction.Responce);
 			var buffer = packet.ToBytes();

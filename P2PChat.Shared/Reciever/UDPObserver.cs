@@ -16,6 +16,7 @@ namespace P2PChat.Reciever
 		SynchronizationContext _synchronization;
 		CancellationToken _token;
 		CancellationTokenSource _tokenSource;
+		Task observeTask;
 		IRoute _routes;
 		int _port;
 		//IPEndPoint _mask;
@@ -30,20 +31,19 @@ namespace P2PChat.Reciever
 
 		public void Start ()
 		{
-			Stop();
-			serverStopped = true;
-			_synchronization.Post((_) => Console.WriteLine("UDPObserver started"), null);
+			serverStopped = false;
+			_synchronization.Post((_) => Console.WriteLine("UDPObserver started on port " + _port), null);
 
 			_client = new UdpClient(_port);
 			_tokenSource = new CancellationTokenSource();
 			_token = _tokenSource.Token;
-			listen();
+			observeTask = Task.Factory.StartNew(listen, _token);
 		}
 
-		public void Stop ()
+		public async void Stop ()
 		{
-			serverStopped = false;
-			Debug.WriteLine("Stopping UDPObserver on port ", _port);
+			serverStopped = true;
+			Debug.WriteLine("Stopping UDPObserver on port " + _port);
 			if ( _tokenSource != null )
 				_tokenSource.Cancel();
 			if ( _client != null )

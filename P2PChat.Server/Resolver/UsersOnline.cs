@@ -15,7 +15,7 @@ namespace P2PChat.Server.Resolver
 		public override Action Handle (Packet packet)
 		{
 			var userPacket = OnlineUsers.Parse(packet);
-			if ( userPacket == null || userPacket.Users != null || userPacket.Action == FetchAction.Null )
+			if ( userPacket == null || userPacket.Users == null || userPacket.Action == FetchAction.Null )
 				return base.Handle(packet);
 
 			var ip = packet.Sender.Address;

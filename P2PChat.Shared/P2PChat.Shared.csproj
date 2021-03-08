@@ -52,6 +52,7 @@
     <Compile Include="Reciever\IRoute.cs" />
     <Compile Include="Reciever\Packet.cs" />
     <Compile Include="Reciever\UDPObserver.cs" />
+    <Compile Include="UndefinedResolver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
