@@ -28,7 +28,8 @@ namespace P2PChat.Client
 		{
 			var settings = new Settings();
 			var collection = Dns.GetHostAddresses(settings.StanHost)
-				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork
+							&& !ip.ToString().StartsWith("25."));
 
 			IPAddress address;
 			if ( collection.Count() > 0 )
