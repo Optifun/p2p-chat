@@ -19,7 +19,7 @@ namespace P2PChat.Reciever
 		IRoute _routes;
 		int _port;
 		//IPEndPoint _mask;
-
+		bool serverStopped = true;
 
 		public UDPObserver (int port, SynchronizationContext context, IRoute routeChain)
 		{
@@ -31,6 +31,7 @@ namespace P2PChat.Reciever
 		public void Start ()
 		{
 			Stop();
+			serverStopped = true;
 			_synchronization.Post((_) => Console.WriteLine("UDPObserver started"), null);
 
 			_client = new UdpClient(_port);
@@ -41,6 +42,8 @@ namespace P2PChat.Reciever
 
 		public void Stop ()
 		{
+			serverStopped = false;
+			Debug.WriteLine("Stopping UDPObserver on port ", _port);
 			if ( _tokenSource != null )
 				_tokenSource.Cancel();
 			if ( _client != null )
@@ -61,7 +64,8 @@ namespace P2PChat.Reciever
 				}
 				catch ( SocketException ex )
 				{
-					Debug.Fail(ex.ToString());
+					if ( !serverStopped )
+						Debug.Fail(Process.GetCurrentProcess().ProcessName + "\n\r" + ex.ToString());
 					return;
 				}
 			}
