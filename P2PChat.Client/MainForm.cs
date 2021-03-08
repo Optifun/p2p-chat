@@ -21,22 +21,23 @@ namespace P2PChat.Client
 		PublicUser self;
 		PublicUser _selected;
 		List<PublicUser> _users;
-
+		List<PublicUser> hidingUsers;
 		public MainForm (PublicUser self, IPEndPoint stanIP)
 		{
 			InitializeComponent();
 			this.self = self;
-			userNameLabel.Text = self.Nickname;
-
 			_serverIP = stanIP;
+
+			userNameLabel.Text = self.Nickname;
+			hidingUsers = new List<PublicUser> { self };
+
 			Debug.WriteLine("Opening Client on ip" + self.Address + " on port" + self.port);
 			Debug.WriteLine("Setting server ip" + _serverIP);
 			_client = new Client(self.UserID, self.port, _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
-			_setUsers(_client.Users);
-			_selected = chatList.Items[0] as PublicUser;
+			_seOnlinetUsers(_client.Users);
 
-			_client.UsersUpdated += _setUsers;
+			_client.UsersUpdated += _seOnlinetUsers;
 			_client.MessageRecieved += _drawMessage;
 			_client.Listen();
 		}
@@ -57,14 +58,17 @@ namespace P2PChat.Client
 			//messageLayout.SizeChanged += bubble.ResizeControl;
 		}
 
-		private void _setUsers (List<PublicUser> list)
+		private void _seOnlinetUsers (List<PublicUser> list)
 		{
-			_users = list;
-			chatList.Items.AddRange(_users.ToArray());
+			_users = list.Except(hidingUsers).ToList();
+			onlineList.Items.AddRange(_users.ToArray());
 		}
 
 		private void button1_Click (object sender, EventArgs e)
 		{
+			if ( _selected == null )
+				return;
+
 			var message = _client.Send(_selected.UserID, textBox1.Text);
 			_appendBubble(self.Nickname, message, true);
 		}

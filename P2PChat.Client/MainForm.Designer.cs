@@ -32,6 +32,7 @@
 			this.usernamePanel = new System.Windows.Forms.Panel();
 			this.userNameLabel = new System.Windows.Forms.Label();
 			this.chatPanel = new System.Windows.Forms.Panel();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.messageLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.chatboxPanel = new System.Windows.Forms.Panel();
 			this.button1 = new System.Windows.Forms.Button();
@@ -40,12 +41,12 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.chatList = new System.Windows.Forms.ListBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.onlineList = new System.Windows.Forms.ListView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.panel1 = new System.Windows.Forms.Panel();
+			this.onlineList = new System.Windows.Forms.ListBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.usernamePanel.SuspendLayout();
 			this.chatPanel.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.chatboxPanel.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -54,7 +55,6 @@
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
-			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -101,6 +101,16 @@
 			this.chatPanel.Name = "chatPanel";
 			this.chatPanel.Size = new System.Drawing.Size(488, 320);
 			this.chatPanel.TabIndex = 1;
+			// 
+			// panel1
+			// 
+			this.panel1.AutoScroll = true;
+			this.panel1.Controls.Add(this.messageLayout);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(488, 320);
+			this.panel1.TabIndex = 0;
 			// 
 			// messageLayout
 			// 
@@ -192,16 +202,6 @@
 			this.tabPage2.Text = "Online Users";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
-			// onlineList
-			// 
-			this.onlineList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.onlineList.HideSelection = false;
-			this.onlineList.Location = new System.Drawing.Point(3, 3);
-			this.onlineList.Name = "onlineList";
-			this.onlineList.Size = new System.Drawing.Size(282, 411);
-			this.onlineList.TabIndex = 0;
-			this.onlineList.UseCompatibleStateImageBehavior = false;
-			// 
 			// splitContainer1
 			// 
 			this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -223,15 +223,15 @@
 			this.splitContainer1.SplitterWidth = 2;
 			this.splitContainer1.TabIndex = 3;
 			// 
-			// panel1
+			// onlineList
 			// 
-			this.panel1.AutoScroll = true;
-			this.panel1.Controls.Add(this.messageLayout);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(488, 320);
-			this.panel1.TabIndex = 0;
+			this.onlineList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.onlineList.FormattingEnabled = true;
+			this.onlineList.ItemHeight = 16;
+			this.onlineList.Location = new System.Drawing.Point(3, 3);
+			this.onlineList.Name = "onlineList";
+			this.onlineList.Size = new System.Drawing.Size(282, 411);
+			this.onlineList.TabIndex = 0;
 			// 
 			// MainForm
 			// 
@@ -246,6 +246,8 @@
 			this.usernamePanel.ResumeLayout(false);
 			this.usernamePanel.PerformLayout();
 			this.chatPanel.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.chatboxPanel.ResumeLayout(false);
 			this.chatboxPanel.PerformLayout();
 			this.tabControl1.ResumeLayout(false);
@@ -255,8 +257,6 @@
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
-			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -267,7 +267,6 @@
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.ListView onlineList;
 		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.Panel usernamePanel;
 		private System.Windows.Forms.Label userNameLabel;
@@ -278,5 +277,6 @@
 		private System.Windows.Forms.ListBox chatList;
 		private System.Windows.Forms.FlowLayoutPanel messageLayout;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.ListBox onlineList;
 	}
 }

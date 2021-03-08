@@ -38,6 +38,20 @@ namespace P2PChat
 			Address = ip;
 		}
 
+		public override bool Equals (object obj)
+		{
+			var user = obj as PublicUser;
+			if ( user != null )
+				return user.UserID == UserID;
+			else
+				return false;
+		}
+
+		public override int GetHashCode ()
+		{
+			return UserID.GetHashCode();
+		}
+
 		public override string ToString ()
 		{
 			return Nickname + " [" + UserID + "]";

@@ -21,17 +21,7 @@ namespace P2PChat.Client
 		public event Action<Message> MessageRecieved;
 		int _clientPort;
 
-		public List<PublicUser> Users = new List<PublicUser>
-		{
-			new PublicUser(
-				new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7676),
-				Guid.NewGuid(),
-				"User 1"),
-			new PublicUser(
-				new IPEndPoint(IPAddress.Loopback, 7687),
-				Guid.NewGuid(),
-				"User 2")
-		};
+		public List<PublicUser> Users = new List<PublicUser>();
 
 		private UdpClient _client;
 
@@ -53,7 +43,9 @@ namespace P2PChat.Client
 			_clientPort = clientPort;
 			userObserver = new UserObserver();
 			messageObserver = new MessageObserver(_selfId);
-			observer = new UDPObserver(_clientPort, ctx, userObserver.Compose(messageObserver));
+			var blackHole = new UndefinedResolver();
+			var routes = userObserver.Compose(messageObserver, blackHole);
+			observer = new UDPObserver(_clientPort, ctx, routes);
 		}
 
 
@@ -99,9 +91,11 @@ namespace P2PChat.Client
 
 		private void _usersUpdated (List<PublicUser> list)
 		{
-			var newUsers = Users.Except(list).ToList();
-			if ( newUsers.Count > 0 )
-				UsersUpdated?.Invoke(list);
+			var newUsers = list.Except(Users).ToList();
+			if ( newUsers.Count == 0 )
+				return;
+			Users.AddRange(newUsers);
+			UsersUpdated?.Invoke(newUsers);
 		}
 
 		private void _fetchUsers ()
