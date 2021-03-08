@@ -104,20 +104,10 @@
     <Compile Include="MessageBubble.Designer.cs">
       <DependentUpon>MessageBubble.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\AuthAction.cs" />
-    <Compile Include="Packets\BasePacket.cs" />
-    <Compile Include="Packets\IPacket.cs" />
-    <Compile Include="Packets\Message.cs" />
-    <Compile Include="Packets\OnlineUsers.cs" />
     <Compile Include="Routes\AuthObserver.cs" />
     <Compile Include="Routes\MessageObserver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PublicUser.cs" />
-    <Compile Include="Reciever\AbstractRoute.cs" />
-    <Compile Include="Reciever\IRoute.cs" />
-    <Compile Include="Reciever\Packet.cs" />
-    <Compile Include="Reciever\UDPObserver.cs" />
     <Compile Include="Routes\UserObserver.cs" />
     <EmbeddedResource Include="AuthForm.resx">
       <DependentUpon>AuthForm.cs</DependentUpon>
@@ -163,6 +153,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\P2PChat.Shared\P2PChat.Shared.csproj">
+      <Project>{bda3d0de-5ad0-4226-92da-61bd03401015}</Project>
+      <Name>P2PChat.Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

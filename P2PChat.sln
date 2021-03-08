@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P2PChat.Server2", "P2PChat.Server\P2PChat.Server2.csproj", "{AA8E06A5-1257-473C-A502-B57B2315F757}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Client", "P2PChat.Client\P2PChat.Client.csproj", "{F831FF15-68CB-43CA-A8F6-BC01250FC3BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Server", "P2PChat.Server\P2PChat.Server.csproj", "{7016FBA8-4075-40EF-B559-9DB23B5D8247}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Shared", "P2PChat.Shared\P2PChat.Shared.csproj", "{BDA3D0DE-5AD0-4226-92DA-61BD03401015}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AA8E06A5-1257-473C-A502-B57B2315F757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA8E06A5-1257-473C-A502-B57B2315F757}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA8E06A5-1257-473C-A502-B57B2315F757}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA8E06A5-1257-473C-A502-B57B2315F757}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F831FF15-68CB-43CA-A8F6-BC01250FC3BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F831FF15-68CB-43CA-A8F6-BC01250FC3BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F831FF15-68CB-43CA-A8F6-BC01250FC3BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{7016FBA8-4075-40EF-B559-9DB23B5D8247}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7016FBA8-4075-40EF-B559-9DB23B5D8247}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7016FBA8-4075-40EF-B559-9DB23B5D8247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
