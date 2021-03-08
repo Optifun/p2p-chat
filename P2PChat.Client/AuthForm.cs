@@ -26,7 +26,6 @@ namespace P2PChat.Client
 		private AuthObserver authObserver;
 		NatDiscoverer discoverer;
 		NatDevice router;
-		Thread authThread;
 		int openPort;
 
 		MainForm chat;
@@ -45,12 +44,10 @@ namespace P2PChat.Client
 			authObserver.Success += enterChat;
 			_observer = new UDPObserver(openPort, WindowsFormsSynchronizationContext.Current, authObserver);
 			_client = new UdpClient(AddressFamily.InterNetwork);
-			authThread = new Thread(() => _observer.Start());
-			authThread.IsBackground = true;
-			authThread.Start();
+			_observer.Start();
 		}
 
-		private void enterChat (PublicUser user)
+		private async void enterChat (PublicUser user)
 		{
 			_observer.Stop();
 			chat = new MainForm(user, _stanIP);
@@ -128,7 +125,7 @@ namespace P2PChat.Client
 		{
 			try
 			{
-				authThread.Abort();
+				_observer.Stop();
 				if ( chat == null || chat.IsDisposed )
 					router.DeletePortMapAsync(new Mapping(Protocol.Udp, openPort, openPort));
 			}
