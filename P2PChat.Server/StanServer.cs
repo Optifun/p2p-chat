@@ -70,8 +70,10 @@ namespace P2PChat.Server
 			if ( responce.Action == AuthType.Success )
 			{
 				var user = new PublicUser(sender, responce.Id.Value, responce.Nickname);
-				Users.Add(sender, user);
-				Console.Write(user);
+				if ( Users.ContainsKey(sender) )
+					Console.WriteLine($"Multiple client access from ip " + sender);
+				else
+					Users.Add(sender, user);
 			}
 
 			var buffer = responce.ToBytes();
@@ -80,41 +82,37 @@ namespace P2PChat.Server
 
 		private void _addRequestToQueue (IPEndPoint peer)
 		{
-			// TODO: переписать с авторизацией
-			//var user = Users[peer.Address];
-			//if ( user is not null )
-			lock ( _peers )
-			{
-				if ( !_peers.ContainsKey(peer) )
-					_peers.Add(peer, new PublicUser());
-			}
+			if ( Users.Keys.Contains(peer) )
+				lock ( _peers )
+				{
+					var user = Users[peer];
+					if ( !_peers.ContainsKey(peer) )
+						_peers.Add(peer, user);
+				}
 		}
 
 		private void _sendUserInfo ()
 		{
+			if ( _peers.Count() > 0 )
+				_synchronization.Post((_) =>
+				{
+					Console.WriteLine("------");
+					foreach ( var user in _peers )
+						Console.WriteLine($"{user.Key}:{user.Value}");
+					Console.WriteLine("------");
+				}, null);
+
 			var online = _peers.Values.ToList();
 			var hosts = _peers.Keys.ToList();
-			Users = _peers.Select(p => p).ToDictionary(p => p.Key, p => p.Value);
-
 			lock ( _peers )
 			{
 				_peers.Clear();
 			}
 
-			if ( Users.Count() > 0 )
-				_synchronization.Post((_) =>
-				{
-					Console.WriteLine("------");
-					foreach ( var user in Users )
-						Console.WriteLine($"{user.Key}:{user.Value}");
-					Console.WriteLine("------");
-				}, null);
-
 			var packet = new OnlineUsers(online, FetchAction.Responce);
 			var buffer = packet.ToBytes();
 			foreach ( var host in hosts )
 				_client.Send(buffer, buffer.Length, host);
-
 		}
 	}
 }

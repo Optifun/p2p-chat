@@ -28,34 +28,7 @@ namespace P2PChat.Server.Db
 
 		public UserDb () : base("DB.UserDb")//: base("Data Source=(localdb)/Users.sqlite;Initial Catalog=UserDb;Integrated Security=True;ApplicationIntent = ReadWrite;")
 		{
-		}
-
-		protected override void OnModelCreating (DbModelBuilder modelBuilder)
-		{
-			CreateTables();
-			base.OnModelCreating(modelBuilder);
-		}
-
-		protected void CreateTables ()
-		{
-			const string sqlTextCreateTables = @"
-			CREATE TABLE IF NOT EXISTS Users
-			(
-				UserId NVARCHAR(32) PRIMARY KEY NOT NULL,
-				Nickname NVARCHAR(32) NOT NULL,
-				PasswordHash NVARCHAR(64) NOT NULL
-			);";
-
-			var connectionString = this.Database.Connection.ConnectionString;
-			using ( var dbConnection = new System.Data.SQLite.SQLiteConnection(connectionString) )
-			{
-				dbConnection.Open();
-				using ( var dbCommand = dbConnection.CreateCommand() )
-				{
-					dbCommand.CommandText = sqlTextCreateTables;
-					dbCommand.ExecuteNonQuery();
-				}
-			}
+			// CodeFirst подход для Sqlite не работает
 		}
 	}
 }
