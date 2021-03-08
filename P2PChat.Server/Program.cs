@@ -30,7 +30,7 @@ namespace P2PChat.Server
 			context = SynchronizationContext.Current ?? new SynchronizationContext();
 			SynchronizationContext.SetSynchronizationContext(context);
 
-			server = new StanServer(750, context);
+			server = new StanServer(1600, context);
 			Task.Factory.StartNew(() =>
 			{
 				SynchronizationContext.SetSynchronizationContext(context);
