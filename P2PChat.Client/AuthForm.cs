@@ -52,6 +52,7 @@ namespace P2PChat.Client
 
 		private void enterChat (PublicUser user)
 		{
+			_observer.Stop();
 			chat = new MainForm(user, _stanIP);
 			chat.FormClosed += showAuthForm;
 			chat.Show();

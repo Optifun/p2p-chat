@@ -11,16 +11,15 @@ using System.Threading.Tasks;
 using P2PChat.Reciever;
 using P2PChat.Client.Routes;
 using P2PChat.Packets;
-using Open.Nat;
 using System.Diagnostics;
 
 namespace P2PChat.Client
 {
-	public class Client : IDisposable
+	public class Client
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
 		public event Action<Message> MessageRecieved;
-		int _clientPort = 0;
+		int _clientPort;
 
 		public List<PublicUser> Users = new List<PublicUser>
 		{
@@ -60,45 +59,8 @@ namespace P2PChat.Client
 
 		public async void Listen ()
 		{
-			//Ассинхронно находит подходящий порт и открывает его
-			await OpenPort();
-			Debug.WriteLine(_clientPort);
-			_client = new UdpClient(_clientPort, AddressFamily.InterNetwork);
+			_client = new UdpClient(AddressFamily.InterNetwork);
 			_startFetching();
-		}
-
-		public async Task OpenPort()
-		{
-			var discoverer = new NatDiscoverer();
-			var cts = new CancellationTokenSource(10000);
-			var device = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
-
-			//Занятые udp порты
-			List<int> busyUdpPorts = new List<int>();
-
-			//Нахождение всех занятых портов (публичных и приватных)
-			var mappings = await device.GetAllMappingsAsync();
-			foreach (var mapping in mappings)
-			{
-				if (mapping.Protocol == Protocol.Udp)
-				{
-					Debug.WriteLine(mapping);
-					busyUdpPorts.Add(mapping.PrivatePort);
-					busyUdpPorts.Add(mapping.PublicPort);
-				}
-			}
-
-			//Нахождение свободного порта
-			Random random = new Random();
-			int availablePort = random.Next(30000, 65535);
-			while (busyUdpPorts.Contains(availablePort))
-			{
-				availablePort = random.Next(30000, 65535);
-			}
-
-			_clientPort = availablePort;
-
-			await device.CreatePortMapAsync(new Mapping(Protocol.Udp, _clientPort, _clientPort, "P2P_Chat_User"));
 		}
 
 		public Message Send (Guid userId, string text)
@@ -147,14 +109,6 @@ namespace P2PChat.Client
 			var packet = new OnlineUsers(new List<PublicUser>(), FetchAction.Fetch, _clientPort);
 			var buffer = packet.ToBytes();
 			_client.Send(buffer, buffer.Length, _stanIP);
-		}
-
-		public void Dispose()
-		{
-			var discoverer = new NatDiscoverer();
-			var cts = new CancellationTokenSource(10000);
-			var device = discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts).Result;
-			device.DeletePortMapAsync(new Mapping(Protocol.Udp, _clientPort, _clientPort));
 		}
 	}
 }

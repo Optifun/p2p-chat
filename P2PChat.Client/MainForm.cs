@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using P2PChat.Client.Properties;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace P2PChat.Client
 {
@@ -28,7 +29,9 @@ namespace P2PChat.Client
 			userNameLabel.Text = self.Nickname;
 
 			_serverIP = stanIP;
-			_client = new Client(Guid.NewGuid(), self.port, _serverIP, 700, WindowsFormsSynchronizationContext.Current);
+			Debug.WriteLine("Opening Client on ip" + self.Address + " on port" + self.port);
+			Debug.WriteLine("Setting server ip" + _serverIP);
+			_client = new Client(self.UserID, self.port, _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
 			_setUsers(_client.Users);
 			_selected = chatList.Items[0] as PublicUser;

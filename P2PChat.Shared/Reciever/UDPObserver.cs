@@ -6,18 +6,18 @@ using System.Text;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace P2PChat.Reciever
 {
 	public class UDPObserver
 	{
-		readonly UdpClient _client;
+		UdpClient _client;
 		SynchronizationContext _synchronization;
 		CancellationToken _token;
 		CancellationTokenSource _tokenSource;
 		IRoute _routes;
-
-		//int _port;
+		int _port;
 		//IPEndPoint _mask;
 
 
@@ -25,21 +25,15 @@ namespace P2PChat.Reciever
 		{
 			_synchronization = context;
 			_routes = routeChain;
-			_client = new UdpClient(port);
-		}
-
-		public UDPObserver (IPEndPoint mask, SynchronizationContext context, IRoute routeChain)
-		{
-			//TODO: можно заменить маску на порт на который будут приходить сообщения
-			_synchronization = context;
-			_routes = routeChain;
-			_client = new UdpClient(mask);
+			_port = port;
 		}
 
 		public void Start ()
 		{
-			_synchronization.Post((_) => Console.WriteLine("UDPObserver started"), null);
 			Stop();
+			_synchronization.Post((_) => Console.WriteLine("UDPObserver started"), null);
+
+			_client = new UdpClient(_port);
 			_tokenSource = new CancellationTokenSource();
 			_token = _tokenSource.Token;
 			listen();
@@ -49,6 +43,8 @@ namespace P2PChat.Reciever
 		{
 			if ( _tokenSource != null )
 				_tokenSource.Cancel();
+			if ( _client != null )
+				_client.Close();
 		}
 
 		private void listen ()
@@ -57,9 +53,17 @@ namespace P2PChat.Reciever
 			byte[] data;
 			while ( !_token.IsCancellationRequested )
 			{
-				data = _client.Receive(ref sender);
-				var packet = new Packet(data, sender);
-				Task.Factory.StartNew(() => _synchronization.Post((_) => _routes.Handle(packet)(), null), _token);
+				try
+				{
+					data = _client.Receive(ref sender);
+					var packet = new Packet(data, sender);
+					Task.Factory.StartNew(() => _synchronization.Post((_) => _routes.Handle(packet)(), null), _token);
+				}
+				catch ( SocketException ex )
+				{
+					Debug.Fail(ex.ToString());
+					return;
+				}
 			}
 		}
 
