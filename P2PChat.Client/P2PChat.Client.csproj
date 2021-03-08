@@ -109,6 +109,7 @@
     <Compile Include="Packets\IPacket.cs" />
     <Compile Include="Packets\Message.cs" />
     <Compile Include="Packets\OnlineUsers.cs" />
+    <Compile Include="Routes\AuthObserver.cs" />
     <Compile Include="Routes\MessageObserver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

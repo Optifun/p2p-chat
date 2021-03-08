@@ -21,23 +21,14 @@ namespace P2PChat.Client
 		PublicUser _selected;
 		List<PublicUser> _users;
 
-		public MainForm (PublicUser self)
+		public MainForm (PublicUser self, IPEndPoint stanIP)
 		{
 			InitializeComponent();
 			this.self = self;
 			userNameLabel.Text = self.Nickname;
 
-			var settings = new Settings();
-			var collection = Dns.GetHostAddresses(settings.StanHost)
-				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-			IPAddress address;
-			if ( collection.Count() > 0 )
-				address = collection.Last();
-			else
-				throw new WebException("Can not resolve Host");
-
-			_serverIP = new IPEndPoint(address, 23434);
-			_client = new Client(Guid.NewGuid(), _serverIP, 700, WindowsFormsSynchronizationContext.Current);
+			_serverIP = stanIP;
+			_client = new Client(Guid.NewGuid(), self.port, _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
 			_setUsers(_client.Users);
 			_selected = chatList.Items[0] as PublicUser;

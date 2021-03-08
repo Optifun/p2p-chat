@@ -20,6 +20,7 @@ namespace P2PChat.Packets
 		Success
 	}
 
+	[Serializable]
 	public class AuthAction : BasePacket
 	{
 		public Guid? Id { get; protected set; }

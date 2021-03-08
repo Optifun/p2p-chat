@@ -46,11 +46,12 @@ namespace P2PChat.Client
 		private UserObserver userObserver;
 
 
-		public Client (Guid userId, IPEndPoint stanServerIP, int refreshInterval, SynchronizationContext ctx)
+		public Client (Guid userId, int clientPort, IPEndPoint stanServerIP, int refreshInterval, SynchronizationContext ctx)
 		{
 			_selfId = userId;
 			_stanIP = stanServerIP;
 			_refreshMs = refreshInterval;
+			_clientPort = clientPort;
 			userObserver = new UserObserver();
 			messageObserver = new MessageObserver(_selfId);
 			observer = new UDPObserver(_clientPort, ctx, userObserver.Compose(messageObserver));

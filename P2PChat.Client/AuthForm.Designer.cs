@@ -35,6 +35,9 @@
 			this.passwordBox = new System.Windows.Forms.TextBox();
 			this.loginButton = new System.Windows.Forms.Button();
 			this.registerButton = new System.Windows.Forms.Button();
+			this.label4 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.errorLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -100,11 +103,44 @@
 			this.registerButton.UseVisualStyleBackColor = true;
 			this.registerButton.Click += new System.EventHandler(this.registerButton_Click);
 			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.ForeColor = System.Drawing.Color.Maroon;
+			this.label4.Location = new System.Drawing.Point(265, 208);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(0, 17);
+			this.label4.TabIndex = 7;
+			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.ForeColor = System.Drawing.Color.Maroon;
+			this.label5.Location = new System.Drawing.Point(271, 219);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(0, 17);
+			this.label5.TabIndex = 7;
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// errorLabel
+			// 
+			this.errorLabel.AutoSize = true;
+			this.errorLabel.ForeColor = System.Drawing.Color.Maroon;
+			this.errorLabel.Location = new System.Drawing.Point(272, 211);
+			this.errorLabel.Name = "errorLabel";
+			this.errorLabel.Size = new System.Drawing.Size(0, 17);
+			this.errorLabel.TabIndex = 7;
+			this.errorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// AuthForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(553, 355);
+			this.Controls.Add(this.errorLabel);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.label4);
 			this.Controls.Add(this.registerButton);
 			this.Controls.Add(this.loginButton);
 			this.Controls.Add(this.passwordBox);
@@ -114,6 +150,8 @@
 			this.Controls.Add(this.label1);
 			this.Name = "AuthForm";
 			this.Text = "Form1";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AuthForm_FormClosing);
+			this.Load += new System.EventHandler(this.AuthForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -128,6 +166,9 @@
 		private System.Windows.Forms.TextBox passwordBox;
 		private System.Windows.Forms.Button loginButton;
 		private System.Windows.Forms.Button registerButton;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label errorLabel;
 	}
 }
 
