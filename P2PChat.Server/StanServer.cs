@@ -16,7 +16,6 @@ namespace P2PChat.Server
 	class StanServer
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
-		int _clientPort = 7676;
 		int _serverPort = 23434;
 
 		public Dictionary<IPEndPoint, PublicUser> Users = new Dictionary<IPEndPoint, PublicUser>();
@@ -37,9 +36,8 @@ namespace P2PChat.Server
 		{
 			_synchronization = ctx;
 			_refreshMs = refreshInterval;
-			userDb = new UserDb();
 			userResolver = new UsersOnline();
-			authresolver = new Authentification(userDb);
+			authresolver = new Authentification();
 
 			var routes = authresolver.Compose(userResolver);
 			observer = new UDPObserver(_serverPort, ctx, routes);
@@ -71,9 +69,9 @@ namespace P2PChat.Server
 		{
 			if ( responce.Action == AuthType.Success )
 			{
-				var entry = userDb.SearchByNickname(responce.Nickname);
-				var user = new PublicUser(sender, entry.UserID, entry.Nickname);
-				Users.Add(sender.Address, user);
+				var user = new PublicUser(sender, responce.Id.Value, responce.Nickname);
+				Users.Add(sender, user);
+				Console.Write(user);
 			}
 
 			var buffer = responce.ToBytes();

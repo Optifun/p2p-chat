@@ -6,8 +6,8 @@ namespace P2PChat.Server.Db
 {
 	public class User
 	{
-		public Guid UserID;
-		public string Nickname;
-		public string PasswordHash;
+		public Guid UserId { get; set; }
+		public string Nickname { get; set; }
+		public string PasswordHash { get; set; }
 	}
 }

@@ -2,10 +2,10 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Net.Sockets;
+using System.Configuration;
 
 namespace P2PChat.Server
 {

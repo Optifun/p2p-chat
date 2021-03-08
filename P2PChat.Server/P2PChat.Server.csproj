@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net46\System.Data.SQLite.dll</HintPath>
@@ -75,9 +76,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\P2PChat.Client\P2PChat.Client.csproj">
-      <Project>{f831ff15-68cb-43ca-a8f6-bc01250fc3bc}</Project>
-      <Name>P2PChat.Client</Name>
+    <ProjectReference Include="..\P2PChat.Shared\P2PChat.Shared.csproj">
+      <Project>{bda3d0de-5ad0-4226-92da-61bd03401015}</Project>
+      <Name>P2PChat.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

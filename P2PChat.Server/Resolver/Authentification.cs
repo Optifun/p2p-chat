@@ -15,17 +15,16 @@ namespace P2PChat.Server.Resolver
 	{
 		public event Action<AuthAction, IPEndPoint> AuthRequested;
 
-		UserDb Db;
+		UserDb userDb;
 
-		public Authentification (UserDb db)
+		public Authentification ()
 		{
-			Db = db;
 		}
 
 		public override Action Handle (Packet packet)
 		{
 			var authPacket = AuthAction.Parse(packet);
-			if ( authPacket == null || authPacket.Action == AuthType.Null || authPacket.OpenPort==null )
+			if ( authPacket == null || authPacket.Action == AuthType.Null || authPacket.OpenPort == null )
 				return base.Handle(packet);
 
 			int port = authPacket.OpenPort ?? 0;
@@ -51,43 +50,52 @@ namespace P2PChat.Server.Resolver
 
 		private AuthAction handleRegistration (AuthAction packet)
 		{
-			var entry = Db.SearchByNickname(packet.Nickname);
-			AuthAction responce;
-			if ( entry != null )
+			using ( var userDb = new UserDb() )
 			{
-				responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials);
-			}
-			else
-			{
-				User usr = new User()
+				int port = packet.OpenPort.Value;
+				var entry = userDb.SearchByNickname(packet.Nickname);
+				AuthAction responce;
+				if ( entry != null )
 				{
-					UserID = Guid.NewGuid(),
-					Nickname = packet.Nickname,
-					PasswordHash = packet.Password
-				};
+					responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials, port);
+				}
+				else
+				{
+					User usr = new User()
+					{
+						UserId = Guid.NewGuid(),
+						Nickname = packet.Nickname,
+						PasswordHash = packet.Password
+					};
 
-				usr = Db.Users.Add(usr);
-				responce = new AuthAction(usr.UserID, usr.Nickname, usr.PasswordHash, AuthType.Success);
+					usr = userDb.Users.Add(usr);
+					userDb.SaveChangesAsync();
+					responce = new AuthAction(usr.UserId, usr.Nickname, usr.PasswordHash, AuthType.Success, port);
+				}
+				return responce;
 			}
-			return responce;
 		}
 
 		private AuthAction handleLogin (AuthAction packet)
 		{
-			var entry = Db.SearchByNickname(packet.Nickname);
-			AuthAction responce;
-			if ( entry != null )
+			using ( userDb = new UserDb() )
 			{
-				if ( entry.PasswordHash == packet.Password && entry.Nickname == packet.Nickname )
-					responce = new AuthAction(entry.UserID, entry.Nickname, entry.PasswordHash, AuthType.Success);
+				int port = packet.OpenPort.Value;
+				var entry = userDb.SearchByNickname(packet.Nickname);
+				AuthAction responce;
+				if ( entry != null )
+				{
+					if ( entry.PasswordHash == packet.Password && entry.Nickname == packet.Nickname )
+						responce = new AuthAction(entry.UserId, entry.Nickname, entry.PasswordHash, AuthType.Success, port);
+					else
+						responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials, port);
+				}
 				else
-					responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials);
+				{
+					responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials, port);
+				}
+				return responce;
 			}
-			else
-			{
-				responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials);
-			}
-			return responce;
 		}
 	}
 }

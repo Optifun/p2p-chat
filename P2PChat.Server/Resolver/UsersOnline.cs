@@ -8,18 +8,19 @@ using System.Net;
 
 namespace P2PChat.Server.Resolver
 {
-	public class UsersOnline: AbstractRoute
+	public class UsersOnline : AbstractRoute
 	{
 		public event Action<IPEndPoint> UsersRequested;
 
 		public override Action Handle (Packet packet)
 		{
 			var userPacket = OnlineUsers.Parse(packet);
+			if ( userPacket == null || userPacket.Users != null || userPacket.Action == FetchAction.Null )
+				return base.Handle(packet);
+
 			var ip = packet.Sender.Address;
 			var port = userPacket.Port;
-			if ( userPacket != null && userPacket.Users != null && userPacket.Action == FetchAction.Fetch )
-				return () => UsersRequested?.Invoke(new IPEndPoint(ip, port));
-			return base.Handle(packet);
+			return () => UsersRequested?.Invoke(new IPEndPoint(ip, port));
 		}
 	}
 }
