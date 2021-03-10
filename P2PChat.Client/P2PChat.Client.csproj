@@ -92,6 +92,9 @@
       <DependentUpon>AuthForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Client.cs" />
+    <Compile Include="DB\ChatDb.cs" />
+    <Compile Include="DB\Message.cs" />
+    <Compile Include="DB\User.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

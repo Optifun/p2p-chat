@@ -41,8 +41,8 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.chatList = new System.Windows.Forms.ListBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.onlineList = new System.Windows.Forms.ListBox();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.usernamePanel.SuspendLayout();
 			this.chatPanel.SuspendLayout();
@@ -202,6 +202,17 @@
 			this.tabPage2.Text = "Online Users";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
+			// onlineList
+			// 
+			this.onlineList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.onlineList.FormattingEnabled = true;
+			this.onlineList.ItemHeight = 16;
+			this.onlineList.Location = new System.Drawing.Point(3, 3);
+			this.onlineList.Name = "onlineList";
+			this.onlineList.Size = new System.Drawing.Size(282, 411);
+			this.onlineList.TabIndex = 0;
+			this.onlineList.SelectedIndexChanged += new System.EventHandler(this.onlineList_SelectedIndexChanged);
+			// 
 			// splitContainer1
 			// 
 			this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -223,16 +234,6 @@
 			this.splitContainer1.SplitterWidth = 2;
 			this.splitContainer1.TabIndex = 3;
 			// 
-			// onlineList
-			// 
-			this.onlineList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.onlineList.FormattingEnabled = true;
-			this.onlineList.ItemHeight = 16;
-			this.onlineList.Location = new System.Drawing.Point(3, 3);
-			this.onlineList.Name = "onlineList";
-			this.onlineList.Size = new System.Drawing.Size(282, 411);
-			this.onlineList.TabIndex = 0;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -241,7 +242,7 @@
 			this.Controls.Add(this.splitContainer1);
 			this.MinimumSize = new System.Drawing.Size(600, 480);
 			this.Name = "MainForm";
-			this.Text = "MainForm";
+			this.Text = "P2P Chat";
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.usernamePanel.ResumeLayout(false);
 			this.usernamePanel.PerformLayout();

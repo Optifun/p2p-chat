@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using P2PChat.Client.Properties;
 using System.Net.Sockets;
 using System.Diagnostics;
+using P2PChat.Client.DB;
 
 namespace P2PChat.Client
 {
@@ -19,9 +20,13 @@ namespace P2PChat.Client
 		Client _client;
 		IPEndPoint _serverIP;
 		PublicUser self;
-		PublicUser _selected;
-		List<PublicUser> _users;
+		PublicUser _selectedChat;
+		PublicUser _selectedUser;
+		List<PublicUser> _chatUsers => _chats.Keys.ToList();
+		List<PublicUser> _onlineUsers;
 		List<PublicUser> hidingUsers;
+		Dictionary<PublicUser, List<DB.Message>> _chats;
+
 		public MainForm (PublicUser self, IPEndPoint stanIP)
 		{
 			InitializeComponent();
@@ -30,54 +35,130 @@ namespace P2PChat.Client
 
 			userNameLabel.Text = self.Nickname;
 			hidingUsers = new List<PublicUser> { self };
+			_chats = new Dictionary<PublicUser, List<DB.Message>>();
 
 			Debug.WriteLine("Opening Client on ip" + self.Address + " on port" + self.port);
 			Debug.WriteLine("Setting server ip" + _serverIP);
 			_client = new Client(self.UserID, self.port, _serverIP, 700, WindowsFormsSynchronizationContext.Current);
 
-			_seOnlinetUsers(_client.Users);
+			_setOnlinetUsers(_client.Users);
 
-			_client.UsersUpdated += _seOnlinetUsers;
-			_client.MessageRecieved += _drawMessage;
+			_client.UsersUpdated += _setOnlinetUsers;
+			_client.MessageRecieved += _saveMessage;
 			_client.Listen();
 		}
 
-		private void _drawMessage (Packets.Message msg)
+		private void _saveMessage (Packets.Message msg)
 		{
-			var sender = _users.Find(usr => usr.UserID == msg.Sender);
-			_appendBubble(self.Nickname, msg, false);
+			var senderId = msg.Reciever == self.UserID ? msg.Sender : msg.Reciever;
+			var message = new DB.Message(msg.Id, msg.Sender, senderId == self.UserID, msg.Text);
+
+			var sender = _onlineUsers.First(usr => usr.UserID == senderId);
+			if ( _chats.ContainsKey(sender) )
+				_chats[sender].Add(message);
+			else
+			{
+				_chats.Add(sender, new List<DB.Message> { message });
+				chatList.Items.Add(sender);
+				chatList.Focus();
+			}
+			//TODO: add to DB
+			_drawMessage(message);
 		}
 
-		private void _appendBubble (string nick, Packets.Message msg, bool self)
+		private void _drawMessage (DB.Message msg)
+		{
+			if ( msg.Self )
+				_appendBubble(self.Nickname, msg, msg.Self);
+			else
+			{
+				var sender = _onlineUsers.Find(usr => usr.UserID == msg.ChatId);
+				_appendBubble(sender.Nickname, msg, msg.Self);
+			}
+		}
+
+		private void _appendBubble (string nick, DB.Message msg, bool self)
 		{
 			var bubble = new MessageBubble(nick, msg.Text, self);
 			messageLayout.Controls.Add(bubble);
 			bubble.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-			//bubble.Dock = DockStyle.Bottom;
-			//bubble.ResizeControl(messageLayout, null);
-			//messageLayout.SizeChanged += bubble.ResizeControl;
 		}
 
-		private void _seOnlinetUsers (List<PublicUser> list)
+		private void _setOnlinetUsers (List<PublicUser> list)
 		{
-			_users = list.Except(hidingUsers).ToList();
-			onlineList.Items.AddRange(_users.ToArray());
+			_onlineUsers = list.Except(hidingUsers).ToList();
+			onlineList.Items.AddRange(_onlineUsers.ToArray());
 		}
+
+		private void _setActiveAchats (List<PublicUser> list)
+		{
+			chatList.Items.AddRange(list.ToArray());
+		}
+
 
 		private void button1_Click (object sender, EventArgs e)
 		{
-			if ( _selected == null )
+			if ( _selectedChat == null && _selectedUser == null )
 				return;
 
-			var message = _client.Send(_selected.UserID, textBox1.Text);
-			_appendBubble(self.Nickname, message, true);
+			var user = _selectedChat ?? _selectedUser;
+			var message = _sendMessage(user, textBox1.Text);
+			_drawMessage(message);
+			textBox1.Text = "";
 		}
+
+		private DB.Message _sendMessage (PublicUser user, string text)
+		{
+			if ( !_onlineUsers.Contains(user) )
+				return null;
+
+			var packet = _client.Send(user.UserID, textBox1.Text);
+
+			var message = new DB.Message(packet.Id, user.UserID, true, text);
+			//TODO: save to DB
+			if ( !_chatUsers.Contains(user) )
+			{
+				_chats.Add(user, new List<DB.Message> { message });
+				chatList.Items.Add(user);
+			}
+			return message;
+		}
+
+		private void drawChat (PublicUser user)
+		{
+			List<DB.Message> chat;
+			if ( _chats.TryGetValue(user, out chat) )
+			{
+				messageLayout.Controls.Clear();
+				foreach ( var message in chat )
+					_drawMessage(message);
+			}
+		}
+
 
 		private void chatList_SelectedIndexChanged (object sender, EventArgs e)
 		{
-			var index = chatList.SelectedIndex;
-			if ( index >= 0 )
-				_selected = _users[index];
+			var user = (PublicUser)chatList.SelectedItem;
+			if ( user != null )
+			{
+				if ( user != ( _selectedChat ?? _selectedUser ) )
+					drawChat(user);
+				_selectedChat = user;
+				_selectedUser = null;
+				this.Text = _selectedChat.Nickname + " | P2P Chat";
+			}
+		}
+
+		private void onlineList_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			var user = (PublicUser)onlineList.SelectedItem;
+			if ( user != null )
+			{
+				if ( user != ( _selectedChat ?? _selectedUser ) )
+					drawChat(user);
+				_selectedUser = user;
+				_selectedChat = null;
+			}
 		}
 	}
 }

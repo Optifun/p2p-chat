@@ -12,6 +12,7 @@ namespace P2PChat.Packets
 	[Serializable]
 	public class Message : BasePacket
 	{
+		public Guid Id { get; protected set; }
 		public Guid Sender => _sender;
 		public Guid Reciever => _receiver;
 		public string Text => _msg;
@@ -22,6 +23,7 @@ namespace P2PChat.Packets
 
 		public Message (Guid sender, Guid receiver, string message)
 		{
+			Id = Guid.NewGuid();
 			_sender = sender;
 			_receiver = receiver;
 			_msg = message;

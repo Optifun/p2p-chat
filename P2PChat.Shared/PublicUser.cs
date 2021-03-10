@@ -10,8 +10,7 @@ namespace P2PChat
 	{
 		public Guid UserID;
 		public string Nickname;
-		[NonSerialized]
-		public IPEndPoint Address;
+		public IPEndPoint Address => new IPEndPoint(IPAddress.Parse(StrAddress), port);
 		public string StrAddress;
 		public int port;
 
@@ -26,7 +25,6 @@ namespace P2PChat
 			Nickname = nickname;
 			StrAddress = ip.ToString();
 			this.port = port;
-			Address = new IPEndPoint(IPAddress.Parse(StrAddress), this.port);
 		}
 
 		public PublicUser (IPEndPoint ip, Guid id, string nickname)
@@ -35,7 +33,6 @@ namespace P2PChat
 			Nickname = nickname;
 			StrAddress = ip.Address.ToString();
 			port = ip.Port;
-			Address = ip;
 		}
 
 		public override bool Equals (object obj)
