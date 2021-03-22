@@ -13,7 +13,7 @@ using P2PChat.Server.Db;
 
 namespace P2PChat.Server
 {
-	class StanServer
+	class StunServer
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
 		int _serverPort = 23434;
@@ -32,7 +32,7 @@ namespace P2PChat.Server
 		private Authentification authresolver;
 		private SynchronizationContext _synchronization;
 
-		public StanServer (int refreshInterval, SynchronizationContext ctx)
+		public StunServer (int refreshInterval, SynchronizationContext ctx)
 		{
 			_synchronization = ctx;
 			_refreshMs = refreshInterval;

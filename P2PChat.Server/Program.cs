@@ -14,7 +14,7 @@ namespace P2PChat.Server
 		static int authServerPort = 1442;
 		static Thread AuthServer;
 		static SynchronizationContext context;
-		static StanServer server;
+		static StunServer server;
 
 		static void Main (string[] args)
 		{
@@ -30,7 +30,7 @@ namespace P2PChat.Server
 			context = SynchronizationContext.Current ?? new SynchronizationContext();
 			SynchronizationContext.SetSynchronizationContext(context);
 
-			server = new StanServer(1600, context);
+			server = new StunServer(1600, context);
 			Task.Factory.StartNew(() =>
 			{
 				SynchronizationContext.SetSynchronizationContext(context);
