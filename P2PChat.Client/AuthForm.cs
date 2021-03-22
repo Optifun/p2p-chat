@@ -91,8 +91,29 @@ namespace P2PChat.Client
 		public async Task<int> OpenPort ()
 		{
 			discoverer = new NatDiscoverer();
-			var cts = new CancellationTokenSource(10000);
-			router = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+			Random random = new Random();
+			try
+			{
+				var cts = new CancellationTokenSource(10000);
+				router = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+			}
+			catch ( NatDeviceNotFoundException ex )
+			{
+			}
+			try
+			{
+				if ( router == null )
+				{
+					var cts = new CancellationTokenSource(10000);
+					router = await discoverer.DiscoverDeviceAsync(PortMapper.Pmp, cts);
+				}
+			}
+			catch ( NatDeviceNotFoundException ex )
+			{
+
+				Debug.Fail("Error: Enable port mapping on your router", ex.Message);
+				return random.Next(4000, 6000);
+			}
 
 			//Занятые udp порты
 			List<int> busyUdpPorts = new List<int>();
@@ -110,7 +131,6 @@ namespace P2PChat.Client
 			}
 
 			//Нахождение свободного порта
-			Random random = new Random();
 			int availablePort = random.Next(30000, 65535);
 			while ( busyUdpPorts.Contains(availablePort) )
 			{
@@ -126,7 +146,7 @@ namespace P2PChat.Client
 			try
 			{
 				_observer.Stop();
-				if ( chat == null || chat.IsDisposed )
+				if ( chat == null || router ==null|| chat.IsDisposed )
 					router.DeletePortMapAsync(new Mapping(Protocol.Udp, openPort, openPort));
 			}
 			catch

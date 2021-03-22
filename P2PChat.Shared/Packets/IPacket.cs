@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P2PChat.Packets
 {
-	interface IPacket
+	public interface IPacket
 	{
 		byte[] ToBytes ();
 	}
