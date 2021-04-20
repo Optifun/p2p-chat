@@ -6,6 +6,9 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using P2PChat.Client.Properties;
+using Newtonsoft.Json;
+using System.IO;
+using System.Diagnostics;
 
 namespace P2PChat.Client
 {
@@ -20,26 +23,56 @@ namespace P2PChat.Client
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			resolveStanIP();
-			Application.Run(new AuthForm(stanAddress));
-		}
-
-		private static void resolveStanIP ()
-		{
-			var settings = new Settings();
-			var collection = Dns.GetHostAddresses(settings.StanHost)
-				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork
-							&& !ip.ToString().StartsWith("25."));
-
-			IPAddress address;
-			if ( collection.Count() > 0 )
+			try
 			{
-				address = collection.Last();
+				var address = resolveStanIP();
 				stanAddress = new IPEndPoint(address, 23434);
 			}
-			else
-				throw new WebException("Can not resolve Host");
+			catch ( JsonSerializationException ex )
+			{
+				Debug.Fail("settings.json has wrong format", ex.Message);
+			}
+			catch ( SocketException ex )
+			{
+				Debug.Fail("Cannot connect to the server, please check your internet connection", ex.Message);
+			}
+			catch ( FormatException ex )
+			{
+				Debug.Fail("IP in settings.json has wrong format", ex.Message);
+			}
 
+			if ( stanAddress != null )
+				Application.Run(new AuthForm(stanAddress));
 		}
+
+		private static IPAddress resolveStanIP ()
+		{
+			const string settingsPath = "./settings.json";
+			if ( !File.Exists(settingsPath) )
+				using ( var writer = File.CreateText(settingsPath) )
+					writer.Write("{ \"ip\": \"127.0.0.1\", \"hostname\": \"\"}");
+
+			using ( var file = new StreamReader(settingsPath) )
+			{
+				string text = file.ReadToEnd();
+				if ( text == "" )
+					return IPAddress.Loopback;
+
+				dynamic data = JsonConvert.DeserializeObject(text);
+				string host = data.hostname;
+				string ip = data.ip;
+				if ( host != null && host != "" )
+				{
+					var collection = Dns.GetHostAddresses(host)
+						.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork
+									&& !ip.ToString().StartsWith("25."));
+					return collection.Last();
+				}
+				if ( ip != null && ip != "" )
+					return IPAddress.Parse(ip);
+			}
+			return IPAddress.Loopback;
+		}
+
 	}
 }
