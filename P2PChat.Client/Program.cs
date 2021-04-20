@@ -30,15 +30,15 @@ namespace P2PChat.Client
 			}
 			catch ( JsonSerializationException ex )
 			{
-				Debug.Fail("settings.json has wrong format", ex.Message);
+				MessageBox.Show(ex.Message, "settings.json has wrong format", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch ( SocketException ex )
 			{
-				Debug.Fail("Cannot connect to the server, please check your internet connection", ex.Message);
+				MessageBox.Show(ex.Message, "Cannot connect to the server, please check your internet connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch ( FormatException ex )
 			{
-				Debug.Fail("IP in settings.json has wrong format", ex.Message);
+				MessageBox.Show(ex.Message, "IP in settings.json has wrong format", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
 			if ( stanAddress != null )
