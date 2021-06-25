@@ -9,70 +9,51 @@ using P2PChat.Client.Properties;
 using Newtonsoft.Json;
 using System.IO;
 using System.Diagnostics;
+using P2PChat.Client.Services;
 
 namespace P2PChat.Client
 {
 	static class Program
 	{
 		public static IPEndPoint stanAddress;
+
 		/// <summary>
 		/// Главная точка входа для приложения.
 		/// </summary>
 		[STAThread]
-		static void Main ()
+		static void Main()
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			try
-			{
-				var address = resolveStanIP();
-				stanAddress = new IPEndPoint(address, 23434);
-			}
-			catch ( JsonSerializationException ex )
-			{
-				MessageBox.Show(ex.Message, "settings.json has wrong format", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			catch ( SocketException ex )
-			{
-				MessageBox.Show(ex.Message, "Cannot connect to the server, please check your internet connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			catch ( FormatException ex )
-			{
-				MessageBox.Show(ex.Message, "IP in settings.json has wrong format", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			var address = resolveStanIP();
+			stanAddress = new IPEndPoint(address, 23434);
 
-			if ( stanAddress != null )
+
+			if (stanAddress != null)
 				Application.Run(new AuthForm(stanAddress));
 		}
 
-		private static IPAddress resolveStanIP ()
+		private static IPAddress resolveStanIP()
 		{
 			const string settingsPath = "./settings.json";
-			if ( !File.Exists(settingsPath) )
-				using ( var writer = File.CreateText(settingsPath) )
-					writer.Write("{ \"ip\": \"127.0.0.1\", \"hostname\": \"\"}");
-
-			using ( var file = new StreamReader(settingsPath) )
+			if (File.Exists(settingsPath))
 			{
-				string text = file.ReadToEnd();
-				if ( text == "" )
-					return IPAddress.Loopback;
+				var parser = new JsonConfigParserService(settingsPath);
+				parser.Parse();
 
-				dynamic data = JsonConvert.DeserializeObject(text);
-				string host = data.hostname;
-				string ip = data.ip;
-				if ( host != null && host != "" )
+				if (!string.IsNullOrEmpty(parser.Host))
 				{
-					var collection = Dns.GetHostAddresses(host)
-						.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork
-									&& !ip.ToString().StartsWith("25."));
-					return collection.Last();
+					var collection = Dns.GetHostAddresses(parser.Host)
+						.Where(ipAddress => ipAddress.AddressFamily == AddressFamily.InterNetwork
+						                    && !ipAddress.ToString().StartsWith("25."));
+					return collection.First();
 				}
-				if ( ip != null && ip != "" )
-					return IPAddress.Parse(ip);
+
+				if (!string.IsNullOrEmpty(parser.Ip))
+					return IPAddress.Parse(parser.Ip);
 			}
+
 			return IPAddress.Loopback;
 		}
-
 	}
 }
