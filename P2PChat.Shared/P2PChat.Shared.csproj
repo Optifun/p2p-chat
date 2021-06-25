@@ -52,6 +52,9 @@
     <Compile Include="Reciever\IRoute.cs" />
     <Compile Include="Reciever\Packet.cs" />
     <Compile Include="Reciever\UDPObserver.cs" />
+    <Compile Include="Services\Serializing\BinarySerializerService.cs" />
+    <Compile Include="Services\Serializing\IPacketSerializerService.cs" />
+    <Compile Include="Services\Serializing\MsgPackSerializerService.cs" />
     <Compile Include="UndefinedResolver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
