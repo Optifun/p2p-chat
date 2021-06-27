@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Client", "P2PChat.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Server", "P2PChat.Server\P2PChat.Server.csproj", "{7016FBA8-4075-40EF-B559-9DB23B5D8247}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Shared", "P2PChat.Shared\P2PChat.Shared.csproj", "{BDA3D0DE-5AD0-4226-92DA-61BD03401015}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PChat.Shared", "P2PChat.Shared\P2PChat.Shared.csproj", "{58240558-D7BC-4B6C-AEBA-A05375A49B6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,8 @@ Global
 		{7016FBA8-4075-40EF-B559-9DB23B5D8247}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7016FBA8-4075-40EF-B559-9DB23B5D8247}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7016FBA8-4075-40EF-B559-9DB23B5D8247}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDA3D0DE-5AD0-4226-92DA-61BD03401015}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58240558-D7BC-4B6C-AEBA-A05375A49B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58240558-D7BC-4B6C-AEBA-A05375A49B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
