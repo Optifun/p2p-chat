@@ -10,9 +10,9 @@ namespace P2PChat
 {
 	public class UndefinedResolver : AbstractRoute
 	{
-		public override Action Handle (Packet packet)
+		public override Action Handle (NetworkData networkData)
 		{
-			return () => Debug.WriteLine($"Undefined packet recieved from " + packet.Sender);
+			return () => Debug.WriteLine($"Undefined packet recieved from " + networkData.Sender);
 		}
 	}
 }

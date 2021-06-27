@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace P2PChat.Reciever
 {
 	[Serializable]
-	public class Packet
+	public class NetworkData
 	{
 		public readonly byte[] Data;
 		public readonly IPEndPoint Sender;
-		public Packet(byte[] data, IPEndPoint sender)
+		public NetworkData(byte[] data, IPEndPoint sender)
 		{
 			Data = data;
 			Sender = sender;

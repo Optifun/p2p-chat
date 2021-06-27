@@ -36,9 +36,9 @@ namespace P2PChat.Packets
 			Port = port;
 		}
 
-		public static OnlineUsers Parse (Packet packet)
+		public static OnlineUsers Parse (NetworkData networkData)
 		{
-			MemoryStream stream = new MemoryStream(packet.Data);
+			MemoryStream stream = new MemoryStream(networkData.Data);
 			var msg = _fmt.Deserialize(stream) as OnlineUsers;
 
 			if ( msg is null || msg.Users == null )

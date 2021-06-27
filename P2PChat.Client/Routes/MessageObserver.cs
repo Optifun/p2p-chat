@@ -19,9 +19,9 @@ namespace P2PChat.Client.Routes
 			seldId = self;
 		}
 
-		public override Action Handle (Packet packet)
+		public override Action Handle (NetworkData networkData)
 		{
-			var msg = Message.Parse(packet);
+			var msg = Message.Parse(networkData);
 			if ( msg != null )
 			{
 				// TODO: раскомментировать
@@ -31,7 +31,7 @@ namespace P2PChat.Client.Routes
 				//else
 				//	return () => { };
 			}
-			return base.Handle(packet);
+			return base.Handle(networkData);
 		}
 
 	}

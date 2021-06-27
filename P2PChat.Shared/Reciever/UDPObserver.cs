@@ -59,7 +59,7 @@ namespace P2PChat.Reciever
 				try
 				{
 					data = _client.Receive(ref sender);
-					var packet = new Packet(data, sender);
+					var packet = new NetworkData(data, sender);
 					Task.Factory.StartNew(() => _synchronization.Post((_) => _routes.Handle(packet)(), null), _token);
 				}
 				catch ( SocketException ex )

@@ -12,13 +12,13 @@ namespace P2PChat.Server.Resolver
 	{
 		public event Action<IPEndPoint> UsersRequested;
 
-		public override Action Handle (Packet packet)
+		public override Action Handle (NetworkData networkData)
 		{
-			var userPacket = OnlineUsers.Parse(packet);
+			var userPacket = OnlineUsers.Parse(networkData);
 			if ( userPacket == null || userPacket.Users == null || userPacket.Action == FetchAction.Null )
-				return base.Handle(packet);
+				return base.Handle(networkData);
 
-			var ip = packet.Sender.Address;
+			var ip = networkData.Sender.Address;
 			var port = userPacket.Port;
 			return () => UsersRequested?.Invoke(new IPEndPoint(ip, port));
 		}

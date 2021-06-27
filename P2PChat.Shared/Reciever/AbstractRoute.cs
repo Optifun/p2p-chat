@@ -9,9 +9,9 @@ namespace P2PChat.Reciever
 	public class AbstractRoute : IRoute
 	{
 		private IRoute _next;
-		public virtual Action Handle (Packet packet)
+		public virtual Action Handle (NetworkData networkData)
 		{
-			return _next != null ? _next.Handle(packet) : null;
+			return _next != null ? _next.Handle(networkData) : null;
 		}
 
 		public virtual IRoute SetNext (IRoute route)

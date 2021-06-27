@@ -47,9 +47,9 @@ namespace P2PChat.Packets
 			OpenPort = port;
 		}
 
-		public static AuthAction Parse (Packet packet)
+		public static AuthAction Parse (NetworkData networkData)
 		{
-			MemoryStream stream = new MemoryStream(packet.Data);
+			MemoryStream stream = new MemoryStream(networkData.Data);
 			var _packet = _fmt.Deserialize(stream) as AuthAction;
 
 			if ( _packet == null || _packet.Nickname == null || _packet.Password == null )

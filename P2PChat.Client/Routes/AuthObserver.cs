@@ -14,11 +14,11 @@ namespace P2PChat.Client.Routes
 		public event Action<PublicUser> Success;
 		public event Action<string> Error;
 
-		public override Action Handle (Packet packet)
+		public override Action Handle (NetworkData networkData)
 		{
-			var authPacket = AuthAction.Parse(packet);
+			var authPacket = AuthAction.Parse(networkData);
 			if ( authPacket == null || authPacket.Nickname == null )
-				return base.Handle(packet);
+				return base.Handle(networkData);
 			if ( authPacket.OpenPort == null )
 				return () => { new Exception("Server doesn't provided open port"); };
 

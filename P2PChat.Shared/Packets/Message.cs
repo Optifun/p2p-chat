@@ -29,9 +29,9 @@ namespace P2PChat.Packets
 			_msg = message;
 		}
 
-		public static Message Parse (Packet packet)
+		public static Message Parse (NetworkData networkData)
 		{
-			MemoryStream stream = new MemoryStream(packet.Data);
+			MemoryStream stream = new MemoryStream(networkData.Data);
 			var msg = _fmt.Deserialize(stream) as Message;
 
 			if ( msg is null || msg.Text == null )

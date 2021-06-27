@@ -8,7 +8,7 @@ namespace P2PChat.Reciever
 {
 	public interface IRoute
 	{
-		Action Handle (Packet packet);
+		Action Handle (NetworkData networkData);
 
 		IRoute SetNext (IRoute route);
 	}

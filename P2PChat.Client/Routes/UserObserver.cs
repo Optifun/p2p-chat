@@ -13,12 +13,12 @@ namespace P2PChat.Client.Routes
 	{
 		public event Action<List<PublicUser>> UsersRecieved;
 
-		public override Action Handle (Packet packet)
+		public override Action Handle (NetworkData networkData)
 		{
-			var users = OnlineUsers.Parse(packet);
+			var users = OnlineUsers.Parse(networkData);
 			if ( users != null && users.Users != null && users.Action!= FetchAction.Null)
 				return () => UsersRecieved?.Invoke(users.Users);
-			return base.Handle(packet);
+			return base.Handle(networkData);
 
 		}
 	}

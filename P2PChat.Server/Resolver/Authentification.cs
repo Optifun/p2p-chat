@@ -21,15 +21,15 @@ namespace P2PChat.Server.Resolver
 		{
 		}
 
-		public override Action Handle (Packet packet)
+		public override Action Handle (NetworkData networkData)
 		{
-			var authPacket = AuthAction.Parse(packet);
+			var authPacket = AuthAction.Parse(networkData);
 			if ( authPacket == null || authPacket.Action == AuthType.Null || authPacket.OpenPort == null )
-				return base.Handle(packet);
+				return base.Handle(networkData);
 
 			int port = authPacket.OpenPort ?? 0;
 			var responce = resolveAuthAction(authPacket);
-			return () => AuthRequested?.Invoke(responce, new IPEndPoint(packet.Sender.Address, port));
+			return () => AuthRequested?.Invoke(responce, new IPEndPoint(networkData.Sender.Address, port));
 		}
 
 		private AuthAction resolveAuthAction (AuthAction request)
