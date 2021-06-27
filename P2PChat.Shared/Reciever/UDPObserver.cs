@@ -51,6 +51,18 @@ namespace P2PChat.Reciever
 			_client?.Close();
 		}
 
+		public async void Send<T>(T packet, IPEndPoint address) where T : class, IPacket
+		{
+			var data = _serializer.Serialize(packet);
+			_client.Send(data, data.Length, address);
+		}
+
+		public async void Send<T>(T packet, params IPEndPoint[] addresses) where T : class, IPacket
+		{
+			var data = _serializer.Serialize(packet);
+			foreach (var endPoint in addresses)
+				_client.Send(data, data.Length, endPoint);
+		}
 
 		private void Listen()
 		{

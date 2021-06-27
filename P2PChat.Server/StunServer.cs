@@ -76,9 +76,7 @@ namespace P2PChat.Server
 				else
 					Users.Add(sender, user);
 			}
-
-			var buffer = responce.ToBytes();
-			_client.Send(buffer, buffer.Length, sender);
+			observer.Send(responce, sender);
 		}
 
 		private void _addRequestToQueue (IPEndPoint peer)
@@ -114,9 +112,7 @@ namespace P2PChat.Server
 			}, null);
 
 			var packet = new OnlineUsers(online, FetchAction.Response);
-			var buffer = packet.ToBytes();
-			foreach ( var host in hosts )
-				_client.Send(buffer, buffer.Length, host);
+			observer.Send(packet, hosts.ToArray());
 		}
 	}
 }
