@@ -113,7 +113,7 @@ namespace P2PChat.Server
 				Console.WriteLine("------");
 			}, null);
 
-			var packet = new OnlineUsers(online, FetchAction.Responce);
+			var packet = new OnlineUsers(online, FetchAction.Response);
 			var buffer = packet.ToBytes();
 			foreach ( var host in hosts )
 				_client.Send(buffer, buffer.Length, host);

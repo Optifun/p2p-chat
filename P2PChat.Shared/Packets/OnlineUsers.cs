@@ -7,7 +7,7 @@ namespace P2PChat.Packets
 	{
 		Null = 0,
 		Fetch,
-		Responce
+		Response
 	}
 
 
