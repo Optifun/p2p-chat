@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
+using P2PChat.Packets;
 
 namespace P2PChat.Reciever
 {
 	public interface IRoute
 	{
-		Action Handle (NetworkData networkData);
+		Action Handle (IPEndPoint sender, IPacket obj);
 
 		IRoute SetNext (IRoute route);
 	}

@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
+using P2PChat.Packets;
 
 namespace P2PChat.Reciever
 {
 	public class AbstractRoute : IRoute
 	{
 		private IRoute _next;
-		public virtual Action Handle (NetworkData networkData)
+		public virtual Action Handle (IPEndPoint sender, IPacket obj)
 		{
-			return _next != null ? _next.Handle(networkData) : null;
+			return _next?.Handle(sender, obj);
 		}
 
 		public virtual IRoute SetNext (IRoute route)
