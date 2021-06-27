@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="MessagePack" Version="2.3.58-alpha" />
       <PackageReference Include="MessagePackAnalyzer" Version="2.3.58-alpha" />
+      <PackageReference Include="Open.NAT" Version="2.1.0" />
     </ItemGroup>
 
 </Project>
