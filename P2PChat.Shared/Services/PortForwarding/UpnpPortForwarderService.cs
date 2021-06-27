@@ -9,7 +9,7 @@ namespace P2PChat.Services.PortForwarding
 {
 	public class UpnpPortForwarderService : NatTraversalService
 	{
-		public override async Task<int> TraversePort(Protocol protocol, int fallbackValue = 0)
+		public override async Task<int> TraversePort(NetProtocol protocol, int fallbackValue = 0)
 		{
 			var discoverer = new NatDiscoverer();
 			Random random = new Random();
@@ -28,7 +28,7 @@ namespace P2PChat.Services.PortForwarding
 			List<int> busyUdpPorts = await GetBusyPorts(router);
 			int availablePort = FindAvailablePort(random, busyUdpPorts);
 
-			await MapPortForDevice(protocol, router, availablePort);
+			await MapPortForDevice(protocol.ToPackageProtocol(), router, availablePort);
 			return availablePort;
 		}
 	}

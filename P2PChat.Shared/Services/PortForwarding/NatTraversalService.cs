@@ -10,11 +10,11 @@ namespace P2PChat.Services.PortForwarding
 	{
 		protected NatDevice _router;
 		protected int _openedPort;
-		public abstract Task<int> TraversePort(Protocol protocol, int fallbackValue);
+		public abstract Task<int> TraversePort(NetProtocol protocol, int fallbackValue);
 
-		public async Task DisableTraversal(Protocol protocol)
+		public async Task DisableTraversal(NetProtocol protocol)
 		{
-			await _router.DeletePortMapAsync(new Mapping(protocol, _openedPort, _openedPort));
+				await _router.DeletePortMapAsync(new Mapping(protocol.ToPackageProtocol(), _openedPort, _openedPort));
 		}
 
 		protected static async Task MapPortForDevice(Protocol protocol, NatDevice router, int availablePort)
@@ -36,7 +36,6 @@ namespace P2PChat.Services.PortForwarding
 			{
 				if (mapping.Protocol == Protocol.Udp)
 				{
-
 					Debug.WriteLine(mapping);
 
 					busyUdpPorts.Add(mapping.PrivatePort);
