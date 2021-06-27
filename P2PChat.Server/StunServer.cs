@@ -16,7 +16,6 @@ namespace P2PChat.Server
 	class StunServer
 	{
 		public event Action<List<PublicUser>> UsersUpdated;
-		int _serverPort = 23434;
 
 		public Dictionary<IPEndPoint, PublicUser> Users = new Dictionary<IPEndPoint, PublicUser>();
 
@@ -26,23 +25,16 @@ namespace P2PChat.Server
 
 		private UserDb userDb;
 
-		private UdpClient _client;
 		private UDPObserver observer;
 		private UsersOnline userResolver;
 		private Authentification authresolver;
 		private SynchronizationContext _synchronization;
 
-		public StunServer (int refreshInterval, SynchronizationContext ctx)
+		public StunServer (UDPObserver server, int refreshInterval, SynchronizationContext ctx)
 		{
 			_synchronization = ctx;
 			_refreshMs = refreshInterval;
-			var blackHole = new UndefinedResolver();
-			userResolver = new UsersOnline();
-			authresolver = new Authentification();
-
-			var routes = authresolver.Compose(userResolver, blackHole);
-			observer = new UDPObserver(_serverPort, ctx, routes);
-			_client = new UdpClient(AddressFamily.InterNetwork);
+			observer = server; 
 		}
 
 		public void Start ()
