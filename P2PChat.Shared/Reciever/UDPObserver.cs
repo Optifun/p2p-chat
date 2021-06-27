@@ -7,69 +7,70 @@ using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using P2PChat.Packets;
+using P2PChat.Services.Serializing;
 
 namespace P2PChat.Reciever
 {
 	public class UDPObserver
 	{
-		UdpClient _client;
-		SynchronizationContext _synchronization;
-		CancellationToken _token;
-		CancellationTokenSource _tokenSource;
-		Task observeTask;
-		IRoute _routes;
-		int _port;
-		//IPEndPoint _mask;
-		bool serverStopped = true;
+		private UdpClient _client;
+		private CancellationToken _token;
+		private CancellationTokenSource _tokenSource;
+		private readonly SynchronizationContext _synchronization;
 
-		public UDPObserver (int port, SynchronizationContext context, IRoute routeChain)
+		private readonly IPacketSerializerService _serializer;
+		private readonly IRoute _routes;
+		private readonly int _port;
+		private bool _serverStopped = true;
+
+		public UDPObserver(int port, IPacketSerializerService serializer, SynchronizationContext context, IRoute routeChain)
 		{
+			_serializer = serializer;
 			_synchronization = context;
 			_routes = routeChain;
 			_port = port;
 		}
 
-		public void Start ()
+		public void Start()
 		{
-			serverStopped = false;
+			_serverStopped = false;
 			_synchronization.Post((_) => Console.WriteLine("UDPObserver started on port " + _port), null);
 
 			_client = new UdpClient(_port);
 			_tokenSource = new CancellationTokenSource();
 			_token = _tokenSource.Token;
-			observeTask = Task.Factory.StartNew(listen, _token);
+			Task.Factory.StartNew(Listen, _token);
 		}
 
-		public async void Stop ()
+		public async void Stop()
 		{
-			serverStopped = true;
+			_serverStopped = true;
 			Debug.WriteLine("Stopping UDPObserver on port " + _port);
-			if ( _tokenSource != null )
-				_tokenSource.Cancel();
-			if ( _client != null )
-				_client.Close();
+			_tokenSource?.Cancel();
+			_client?.Close();
 		}
 
-		private void listen ()
+
+		private void Listen()
 		{
 			IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-			byte[] data;
-			while ( !_token.IsCancellationRequested )
+			while (!_token.IsCancellationRequested)
 			{
 				try
 				{
-					data = _client.Receive(ref sender);
-					var packet = new NetworkData(data, sender);
-					Task.Factory.StartNew(() => _synchronization.Post((_) => _routes.Handle(packet)(), null), _token);
+					byte[] data = _client.Receive(ref sender);
+					var packet = _serializer.Deserialize<IPacket>(data);
+					IPEndPoint address = sender;
+					Task.Factory.StartNew(() => _synchronization.Post((_) => _routes.Handle(address, packet)(), null), _token);
 				}
-				catch ( SocketException ex )
+				catch (SocketException ex)
 				{
-					if ( !serverStopped )
+					if (!_serverStopped)
 						Debug.Fail(Process.GetCurrentProcess().ProcessName + "\n\r" + ex.ToString());
 					return;
 				}
 			}
 		}
-
 	}
 }
