@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using P2PChat.Packets;
-using P2PChat.Reciever;
-using P2PChat;
 using System.Net;
 using P2PChat.Packets;
+using P2PChat.Reciever;
 using P2PChat.Server.Db;
-using System.Threading.Tasks;
 
 namespace P2PChat.Server.Resolver
 {
@@ -17,45 +12,41 @@ namespace P2PChat.Server.Resolver
 
 		UserDb userDb;
 
-		public Authentification ()
+		public override Action Handle(IPEndPoint sender, IPacket obj)
 		{
-		}
-
-		public override Action Handle (NetworkData networkData)
-		{
-			var authPacket = AuthAction.Parse(networkData);
-			if ( authPacket == null || authPacket.Action == AuthType.Null || authPacket.OpenPort == null )
-				return base.Handle(networkData);
+			var authPacket = obj as AuthAction;
+			if (authPacket == null || authPacket.Action == AuthType.Null || authPacket.OpenPort == null)
+				return base.Handle(sender, obj);
 
 			int port = authPacket.OpenPort ?? 0;
 			var responce = resolveAuthAction(authPacket);
-			return () => AuthRequested?.Invoke(responce, new IPEndPoint(networkData.Sender.Address, port));
+			return () => AuthRequested?.Invoke(responce, new IPEndPoint(sender.Address, port));
 		}
 
-		private AuthAction resolveAuthAction (AuthAction request)
+		private AuthAction resolveAuthAction(AuthAction request)
 		{
-			switch ( request.Action )
+			switch (request.Action)
 			{
 				case AuthType.Null:
-				return request;
+					return request;
 				case AuthType.Register:
-				return handleRegistration(request);
+					return handleRegistration(request);
 				case AuthType.Login:
-				return handleLogin(request);
+					return HandleLogin(request);
 				default:
-				return new AuthAction(request.Nickname, request.Password, AuthType.Null);
+					return new AuthAction(request.Nickname, request.Password, AuthType.Null);
 			}
 		}
 
 
-		private AuthAction handleRegistration (AuthAction packet)
+		private AuthAction handleRegistration(AuthAction packet)
 		{
-			using ( var userDb = new UserDb() )
+			using (var userDb = new UserDb())
 			{
 				int port = packet.OpenPort.Value;
 				var entry = userDb.SearchByNickname(packet.Nickname);
 				AuthAction responce;
-				if ( entry != null )
+				if (entry != null)
 				{
 					responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials, port);
 				}
@@ -72,20 +63,24 @@ namespace P2PChat.Server.Resolver
 					userDb.SaveChangesAsync();
 					responce = new AuthAction(usr.UserId, usr.Nickname, usr.PasswordHash, AuthType.Success, port);
 				}
+
 				return responce;
 			}
 		}
 
-		private AuthAction handleLogin (AuthAction packet)
+		private AuthAction HandleLogin(AuthAction packet)
 		{
-			using ( userDb = new UserDb() )
+			using (userDb = new UserDb())
 			{
+				if (packet.OpenPort == null)
+					throw new Exception("Packed does not contain OpenPort");
+				
 				int port = packet.OpenPort.Value;
 				var entry = userDb.SearchByNickname(packet.Nickname);
 				AuthAction responce;
-				if ( entry != null )
+				if (entry != null)
 				{
-					if ( entry.PasswordHash == packet.Password && entry.Nickname == packet.Nickname )
+					if (entry.PasswordHash == packet.Password && entry.Nickname == packet.Nickname)
 						responce = new AuthAction(entry.UserId, entry.Nickname, entry.PasswordHash, AuthType.Success, port);
 					else
 						responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials, port);
@@ -94,6 +89,7 @@ namespace P2PChat.Server.Resolver
 				{
 					responce = new AuthAction(packet.Nickname, packet.Password, AuthType.WrongCredentials, port);
 				}
+
 				return responce;
 			}
 		}

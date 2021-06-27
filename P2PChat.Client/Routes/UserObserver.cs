@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 using P2PChat.Reciever;
 using P2PChat.Packets;
 using System.Diagnostics;
+using System.Net;
 
 namespace P2PChat.Client.Routes
 {
 	class UserObserver : AbstractRoute
 	{
-		public event Action<List<PublicUser>> UsersRecieved;
+		public event Action<List<PublicUser>> UsersReceived;
 
-		public override Action Handle (NetworkData networkData)
+		public override Action Handle(IPEndPoint sender, IPacket obj)
 		{
-			var users = OnlineUsers.Parse(networkData);
-			if ( users != null && users.Users != null && users.Action!= FetchAction.Null)
-				return () => UsersRecieved?.Invoke(users.Users);
-			return base.Handle(networkData);
-
+			if ( obj is OnlineUsers users && users.Users != null && users.Action!= FetchAction.Null)
+				return () => UsersReceived?.Invoke(users.Users);
+			return base.Handle(sender, obj);
 		}
 	}
 }
