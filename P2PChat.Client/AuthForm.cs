@@ -20,49 +20,44 @@ namespace P2PChat.Client
 {
 	public partial class AuthForm : Form
 	{
-		IPEndPoint _stanIP;
-		private UdpClient _client;
 		private UDPObserver _observer;
+		private IPEndPoint _stanIP;
+		private int _openPort;
+		// delete binding
 		private AuthObserver authObserver;
-		NatDiscoverer discoverer;
-		NatDevice router;
-		int openPort;
-
 		MainForm chat;
 
-		public AuthForm (IPEndPoint stanIP)
+		public AuthForm (IPEndPoint stanIP, UDPObserver observer, int openPort)
 		{
 			InitializeComponent();
 			_stanIP = stanIP;
+			_observer = observer;
+			this._openPort = openPort;
 		}
 
 		private async void AuthForm_Load (object sender, EventArgs e)
 		{
-			openPort = await OpenPort();
-			authObserver = new AuthObserver();
-			authObserver.Error += printError;
-			authObserver.Success += enterChat;
-			_observer = new UDPObserver(openPort, WindowsFormsSynchronizationContext.Current, authObserver);
-			_client = new UdpClient(AddressFamily.InterNetwork);
+			authObserver.Error += PrintError;
+			authObserver.Success += EnterChat;
 			_observer.Start();
 		}
 
-		private async void enterChat (PublicUser user)
+		private void EnterChat (PublicUser user)
 		{
 			_observer.Stop();
 			chat = new MainForm(user, _stanIP);
-			chat.FormClosed += showAuthForm;
+			chat.FormClosed += ShowAuthForm;
 			chat.Show();
 			Hide();
 		}
 
 
-		private void printError (string error)
+		private void PrintError (string error)
 		{
 			errorLabel.Text = error;
 		}
 
-		private void showAuthForm (object sender, FormClosedEventArgs e)
+		private void ShowAuthForm (object sender, FormClosedEventArgs e)
 		{
 			this.Show();
 		}
@@ -71,83 +66,28 @@ namespace P2PChat.Client
 		{
 			var login = loginBox.Text;
 			var password = passwordBox.Text;
-			sendAuthPacket(new AuthAction(login, password, AuthType.Login, openPort));
+			SendAuthPacket(new AuthAction(login, password, AuthType.Login, _openPort));
 		}
 
 		private void registerButton_Click (object sender, EventArgs e)
 		{
 			var login = loginBox.Text;
 			var password = passwordBox.Text;
-			sendAuthPacket(new AuthAction(login, password, AuthType.Register, openPort));
+			SendAuthPacket(new AuthAction(login, password, AuthType.Register, _openPort));
 		}
 
 
-		private void sendAuthPacket (AuthAction packet)
+		private void SendAuthPacket (AuthAction packet)
 		{
-			var buffer = packet.ToBytes();
-			_client.Send(buffer, buffer.Length, _stanIP);
+			_observer.Send(packet, _stanIP);
 		}
 
-		public async Task<int> OpenPort ()
-		{
-			discoverer = new NatDiscoverer();
-			Random random = new Random();
-			try
-			{
-				var cts = new CancellationTokenSource(10000);
-				router = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
-			}
-			catch ( NatDeviceNotFoundException ex )
-			{
-			}
-			try
-			{
-				if ( router == null )
-				{
-					var cts = new CancellationTokenSource(10000);
-					router = await discoverer.DiscoverDeviceAsync(PortMapper.Pmp, cts);
-				}
-			}
-			catch ( NatDeviceNotFoundException ex )
-			{
-
-				Debug.Fail("Error: Enable port mapping on your router", ex.Message);
-				return random.Next(4000, 6000);
-			}
-
-			//Занятые udp порты
-			List<int> busyUdpPorts = new List<int>();
-
-			//Нахождение всех занятых портов (публичных и приватных)
-			var mappings = await router.GetAllMappingsAsync();
-			foreach ( var mapping in mappings )
-			{
-				if ( mapping.Protocol == Protocol.Udp )
-				{
-					Debug.WriteLine(mapping);
-					busyUdpPorts.Add(mapping.PrivatePort);
-					busyUdpPorts.Add(mapping.PublicPort);
-				}
-			}
-
-			//Нахождение свободного порта
-			int availablePort = random.Next(30000, 65535);
-			while ( busyUdpPorts.Contains(availablePort) )
-			{
-				availablePort = random.Next(30000, 65535);
-			}
-
-			await router.CreatePortMapAsync(new Mapping(Protocol.Udp, availablePort, availablePort, "P2P_Chat_User"));
-			return availablePort;
-		}
 
 		private void AuthForm_FormClosing (object sender, FormClosingEventArgs e)
 		{
 			try
 			{
 				_observer.Stop();
-				if ( chat == null || router ==null|| chat.IsDisposed )
-					router.DeletePortMapAsync(new Mapping(Protocol.Udp, openPort, openPort));
 			}
 			catch
 			{
