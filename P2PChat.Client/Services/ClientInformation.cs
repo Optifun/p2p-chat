@@ -9,8 +9,8 @@ namespace P2PChat.Client.Services
             StunServer = stunServer;
         }
 
-        public PublicUser User { get; }
-        public int OpenedPort { get; }
+        public PublicUser User { get; set; }
+        public int OpenedPort { get; set; }
         public IPEndPoint StunServer { get; }
     }
 }

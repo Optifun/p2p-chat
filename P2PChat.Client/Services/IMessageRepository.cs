@@ -8,5 +8,7 @@ namespace P2PChat.Client.Services
     {
         public event Action<Message> MessageReceived;
         Dictionary<PublicUser, List<Message>> Chats { get; }
+
+        Message Send(PublicUser receiver, string text);
     }
 }

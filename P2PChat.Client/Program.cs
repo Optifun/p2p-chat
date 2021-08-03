@@ -42,6 +42,7 @@ namespace P2PChat.Client
             ClientInformation = new ClientInformation(StunAddress);
 
             _availablePort = await forwarder.TraversePort(NetProtocol.Udp, Int32.MinValue);
+            ClientInformation.OpenedPort = _availablePort;
 
             SetupAuthForm();
 
@@ -51,11 +52,13 @@ namespace P2PChat.Client
 
         private static void ShowAuthForm(object sender, FormClosedEventArgs e)
         {
+            ClientInformation.User = null;
             _authForm.Show();
         }
 
         private static void ShowMainMenu(PublicUser userData)
         {
+            ClientInformation.User = userData;
             SetupMainMenu(userData);
             _authForm.Hide();
             _authFormObserver.Stop();

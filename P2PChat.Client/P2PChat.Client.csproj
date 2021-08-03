@@ -119,6 +119,7 @@
     <Compile Include="Services\IConfigParserService.cs" />
     <Compile Include="Services\IMessageRepository.cs" />
     <Compile Include="Services\JsonConfigParserService.cs" />
+    <Compile Include="Services\MessageRepository.cs" />
     <EmbeddedResource Include="AuthForm.resx">
       <DependentUpon>AuthForm.cs</DependentUpon>
     </EmbeddedResource>

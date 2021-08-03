@@ -4,8 +4,8 @@ namespace P2PChat.Client.Services
 {
     public interface IClientInformation
     {
-        PublicUser User { get; }
-        int OpenedPort { get; }
+        PublicUser User { get; set; }
+        int OpenedPort { get; set; }
         IPEndPoint StunServer { get; }
     }
 }
