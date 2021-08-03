@@ -47,10 +47,14 @@ namespace P2PChat.Client.Services
             _observationTask = Task.Factory.StartNew(RefreshLoop, _tokenSource.Token, TaskCreationOptions.LongRunning);
         }
 
-        private void AddUser(List<PublicUser> users)
+        private void AddUser(List<PublicUser> acceptedUsers)
         {
-            Users.AddRange(users);
-            Users = Users.Distinct().ToList();
+            List<PublicUser> newUsers = acceptedUsers.Except(Users).ToList();
+            if (newUsers.Count == 0)
+                return;
+
+            Users.AddRange(newUsers);
+            UsersUpdated?.Invoke(Users);
         }
 
         public void StopObservation()
