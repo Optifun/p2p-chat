@@ -113,7 +113,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Routes\UserObserver.cs" />
     <Compile Include="Services\ChatRepository.cs" />
+    <Compile Include="Services\ClientInformation.cs" />
     <Compile Include="Services\IChatRepository.cs" />
+    <Compile Include="Services\IClientInformation.cs" />
     <Compile Include="Services\IConfigParserService.cs" />
     <Compile Include="Services\IMessageRepository.cs" />
     <Compile Include="Services\JsonConfigParserService.cs" />
