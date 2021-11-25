@@ -6,7 +6,8 @@ namespace P2PChat.Reciever
 {
 	public interface IRoute
 	{
-		Action Handle (IPEndPoint sender, IPacket obj);
+        TRoute Get<TRoute>() where TRoute : class, IRoute;
+        Action Handle (IPEndPoint sender, IPacket obj);
 
 		IRoute SetNext (IRoute route);
 	}

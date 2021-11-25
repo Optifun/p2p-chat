@@ -18,6 +18,13 @@ namespace P2PChat.Reciever
 			return route;
 		}
 
+		public TRoute Get<TRoute>() where TRoute : class, IRoute 
+        {
+			if (typeof(TRoute).IsAssignableFrom(this.GetType()))
+				return this as TRoute;
+			return _next?.Get<TRoute>();
+		}
+
 		public IRoute Compose(params IRoute[] routes)
 		{
 			IRoute temp = _next ?? this;
