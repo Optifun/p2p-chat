@@ -69,7 +69,9 @@ namespace P2PChat.Client.Services
             _observer.Send(packet, _stunIp);
         }
 
-        public void Dispose() =>
+        public void Dispose()
+        {
             StopObservation();
+        }
     }
 }

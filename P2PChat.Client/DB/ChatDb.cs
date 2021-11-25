@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace P2PChat.Client.DB
 {
-	class ChatDb : DbContext
-	{
-		public DbSet<User> Users;
-		public DbSet<Message> Messages;
+    internal class ChatDb : DbContext
+    {
+        public DbSet<User> Users;
+        public DbSet<Message> Messages;
 
-		public ChatDb () : base("DB.ChatDb")
-		{
-		}
+        public ChatDb() : base("DB.ChatDb")
+        {
+        }
 
-		protected override void OnModelCreating (DbModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
-			modelBuilder.Entity<Message>().HasRequired(msg => msg.User);
-		}
-	}
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Message>().HasRequired(msg => msg.User);
+        }
+    }
 }

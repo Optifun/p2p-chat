@@ -16,7 +16,7 @@ using P2PChat.Client.DI;
 
 namespace P2PChat.Client
 {
-    static class Program
+    internal static class Program
     {
         public static IServiceProvider ServiceProvider { get; set; }
 
@@ -47,7 +47,7 @@ namespace P2PChat.Client
             var clientInformation = app.GetRequiredService<IClientInformation>();
             _availablePort = await forwarder.TraversePort(NetProtocol.Udp, 0);
             clientInformation.OpenedPort = _availablePort;
-            var stunIp = await ResolveStunIp();
+            IPAddress stunIp = await ResolveStunIp();
             StunAddress = new IPEndPoint(stunIp, 23434);
 
             var authFactory = app.GetRequiredService<AuthFactory>();
@@ -61,7 +61,7 @@ namespace P2PChat.Client
         /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
-        static async Task Main()
+        private static async Task Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -83,8 +83,8 @@ namespace P2PChat.Client
 
             if (!string.IsNullOrEmpty(parser.Host))
             {
-                var ipAddresses = await Dns.GetHostAddressesAsync(parser.Host);
-                var publicIp = ipAddresses
+                IPAddress[] ipAddresses = await Dns.GetHostAddressesAsync(parser.Host);
+                IPAddress publicIp = ipAddresses
                     .First(ipAddress => !ipAddress.ToString().StartsWith("25.")
                                         && ipAddress.AddressFamily == AddressFamily.InterNetwork);
                 return publicIp;

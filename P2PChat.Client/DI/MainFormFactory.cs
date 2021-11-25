@@ -5,13 +5,14 @@ using P2PChat.Reciever;
 using P2PChat.Services.Serializing;
 using System;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace P2PChat.Client.DI
 {
-    class MainFormFactory
+    internal class MainFormFactory
     {
-        IServiceScopeFactory _scopeFactory;
+        private IServiceScopeFactory _scopeFactory;
         private int _availablePort;
         private IPEndPoint _stunEndPoint;
         private IClientInformation _client;
@@ -31,7 +32,7 @@ namespace P2PChat.Client.DI
 
         private MainForm SetupMainForm()
         {
-            using (var scope = _scopeFactory.CreateScope())
+            using (IServiceScope scope = _scopeFactory.CreateScope())
             {
                 IServiceProvider provider = scope.ServiceProvider;
                 var serializer = provider.GetRequiredService<IPacketSerializerService>();
@@ -39,9 +40,9 @@ namespace P2PChat.Client.DI
                 var userObserver = new UserObserver();
                 var messageObserver = new MessageObserver(_client.User.UserID);
                 var blackHole = new UndefinedResolver();
-                var routes = userObserver.Compose(messageObserver, blackHole);
+                IRoute routes = userObserver.Compose(messageObserver, blackHole);
 
-                var mainFormObserver = InitializeUdpObserver(_availablePort, routes, serializer);
+                UDPObserver mainFormObserver = InitializeUdpObserver(_availablePort, routes, serializer);
 
                 IChatRepository chatRepository = new ChatRepository(mainFormObserver, userObserver, _availablePort, _stunEndPoint);
                 IMessageRepository messageRepository = new MessageRepository(chatRepository, _client, messageObserver, mainFormObserver);
@@ -52,7 +53,9 @@ namespace P2PChat.Client.DI
             }
         }
 
-        private UDPObserver InitializeUdpObserver(int availablePort, IRoute routes, IPacketSerializerService serializer) =>
-            new UDPObserver(availablePort, serializer, WindowsFormsSynchronizationContext.Current, routes);
+        private UDPObserver InitializeUdpObserver(int availablePort, IRoute routes, IPacketSerializerService serializer)
+        {
+            return new UDPObserver(availablePort, serializer, SynchronizationContext.Current, routes);
+        }
     }
 }

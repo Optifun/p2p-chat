@@ -18,7 +18,7 @@ namespace P2PChat.Client
         private List<PublicUser> ChatUsers => _chats.Keys.ToList();
         private List<PublicUser> _onlineUsers;
         private List<PublicUser> _hidingUsers;
-        Dictionary<PublicUser, List<DB.Message>> _chats;
+        private Dictionary<PublicUser, List<Message>> _chats;
         private IClientInformation _clientInformation;
         private IMessageRepository _messageRepository;
         private IChatRepository _chatRepository;
@@ -32,7 +32,7 @@ namespace P2PChat.Client
 
             userNameLabel.Text = _clientInformation.User.Nickname;
             _hidingUsers = new List<PublicUser> {_clientInformation.User};
-            _chats = new Dictionary<PublicUser, List<DB.Message>>();
+            _chats = new Dictionary<PublicUser, List<Message>>();
 
             // Debug.WriteLine("Opening Client on ip" + self.Address + " on port" + self.port);
             //TODO: убрать ссылки на Client
@@ -46,15 +46,17 @@ namespace P2PChat.Client
 
         private void _saveMessage(Packets.Message msg)
         {
-            var senderId = msg.Reciever == _self.UserID ? msg.Sender : msg.Reciever;
-            var message = new DB.Message(msg.Id, msg.Sender, senderId == _self.UserID, msg.Text);
+            Guid senderId = msg.Reciever == _self.UserID ? msg.Sender : msg.Reciever;
+            var message = new Message(msg.Id, msg.Sender, senderId == _self.UserID, msg.Text);
 
-            var sender = _onlineUsers.First(usr => usr.UserID == senderId);
+            PublicUser sender = _onlineUsers.First(usr => usr.UserID == senderId);
             if (_chats.ContainsKey(sender))
+            {
                 _chats[sender].Add(message);
+            }
             else
             {
-                _chats.Add(sender, new List<DB.Message> {message});
+                _chats.Add(sender, new List<Message> {message});
                 chatList.Items.Add(sender);
                 chatList.Focus();
             }
@@ -69,18 +71,20 @@ namespace P2PChat.Client
             Program.AuthForm.Show();
         }
 
-        private void _drawMessage(DB.Message msg)
+        private void _drawMessage(Message msg)
         {
             if (msg.Self)
+            {
                 _appendBubble(_self.Nickname, msg, msg.Self);
+            }
             else
             {
-                var sender = _onlineUsers.Find(usr => usr.UserID == msg.ChatId);
+                PublicUser sender = _onlineUsers.Find(usr => usr.UserID == msg.ChatId);
                 _appendBubble(sender.Nickname, msg, msg.Self);
             }
         }
 
-        private void _appendBubble(string nick, DB.Message msg, bool self)
+        private void _appendBubble(string nick, Message msg, bool self)
         {
             var bubble = new MessageBubble(nick, msg.Text, self);
             messageLayout.Controls.Add(bubble);
@@ -110,18 +114,18 @@ namespace P2PChat.Client
             textBox1.Text = "";
         }
 
-        private DB.Message _sendMessage(PublicUser user, string text)
+        private Message _sendMessage(PublicUser user, string text)
         {
             if (!_onlineUsers.Contains(user))
                 return null;
 
             var packet = _client.Send(user.UserID, textBox1.Text);
 
-            var message = new DB.Message(packet.Id, user.UserID, true, text);
+            var message = new Message(packet.Id, user.UserID, true, text);
             //TODO: save to DB
             if (!ChatUsers.Contains(user))
             {
-                _chats.Add(user, new List<DB.Message> {message});
+                _chats.Add(user, new List<Message> {message});
                 chatList.Items.Add(user);
             }
 
@@ -130,11 +134,11 @@ namespace P2PChat.Client
 
         private void DrawChat(PublicUser user)
         {
-            List<DB.Message> chat;
+            List<Message> chat;
             if (_chats.TryGetValue(user, out chat))
             {
                 messageLayout.Controls.Clear();
-                foreach (var message in chat)
+                foreach (Message message in chat)
                     _drawMessage(message);
             }
         }
@@ -149,7 +153,7 @@ namespace P2PChat.Client
                     DrawChat(user);
                 _selectedChat = user;
                 _selectedUser = null;
-                this.Text = _selectedChat.Nickname + @" | P2P Chat";
+                Text = _selectedChat.Nickname + @" | P2P Chat";
             }
         }
 
@@ -164,7 +168,5 @@ namespace P2PChat.Client
                 _selectedChat = null;
             }
         }
-
-
     }
 }

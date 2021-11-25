@@ -4,13 +4,14 @@ using P2PChat.Client.Services;
 using P2PChat.Reciever;
 using P2PChat.Services.Serializing;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace P2PChat.Client.DI
 {
-    class AuthFactory
+    internal class AuthFactory
     {
-        IServiceScopeFactory _scopeFactory;
+        private IServiceScopeFactory _scopeFactory;
         private int _availablePort;
         private IPEndPoint _stunEndPoint;
 
@@ -35,9 +36,9 @@ namespace P2PChat.Client.DI
 
                 var authController = new AuthObserver();
                 var blackHole = new UndefinedResolver();
-                var routes = authController.Compose(blackHole);
+                IRoute routes = authController.Compose(blackHole);
 
-                var authFormObserver = InitializeUdpObserver(_availablePort, routes, serializer);
+                UDPObserver authFormObserver = InitializeUdpObserver(_availablePort, routes, serializer);
                 var authForm = new AuthForm(clientInformation, _stunEndPoint, authFormObserver, _availablePort);
 
                 authController.Success += authForm.ShowMainForm;
@@ -46,7 +47,9 @@ namespace P2PChat.Client.DI
             }
         }
 
-        private UDPObserver InitializeUdpObserver(int availablePort, IRoute routes, IPacketSerializerService serializer) =>
-            new UDPObserver(availablePort, serializer, WindowsFormsSynchronizationContext.Current, routes);
+        private UDPObserver InitializeUdpObserver(int availablePort, IRoute routes, IPacketSerializerService serializer)
+        {
+            return new UDPObserver(availablePort, serializer, SynchronizationContext.Current, routes);
+        }
     }
 }

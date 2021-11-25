@@ -30,15 +30,17 @@ namespace P2PChat.Client.Services
             if (user == null)
                 return null;
 
-            Message message = new Message(_clientInformation.User.UserID, receiver.UserID, text);
+            var message = new Message(_clientInformation.User.UserID, receiver.UserID, text);
             _observer.Send(message, user.Address);
             StoreMessage(message, receiver);
 
             return message;
         }
 
-        private PublicUser FindReceiver(PublicUser receiver) =>
-            _chatRepository.Users.Find(usr => usr.UserID == receiver.UserID);
+        private PublicUser FindReceiver(PublicUser receiver)
+        {
+            return _chatRepository.Users.Find(usr => usr.UserID == receiver.UserID);
+        }
 
         private void OnMessageReceived(Message message)
         {
