@@ -27,6 +27,9 @@ namespace P2PChat.Client
         private static UDPObserver _mainFormObserver;
         private static int _availablePort;
 
+        private static IChatRepository _chatRepository;
+        private static IMessageRepository _messageRepository;
+
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
@@ -59,19 +62,19 @@ namespace P2PChat.Client
         private static void ShowMainMenu(PublicUser userData)
         {
             ClientInformation.User = userData;
-            SetupMainMenu(userData);
+            SetupMainMenu(ClientInformation);
             _authForm.Hide();
             _authFormObserver.Stop();
             _mainForm.Show();
         }
 
-        private static void SetupMainMenu(PublicUser user)
+        private static void SetupMainMenu(IClientInformation clientInformation)
         {
-            _mainForm = new MainForm(user, StunAddress);
+            _mainForm = new MainForm(clientInformation, _messageRepository, _chatRepository);
             _mainForm.FormClosed += ShowAuthForm;
 
             _userObserver = new UserObserver();
-            _messageObserver = new MessageObserver(user.UserID);
+            _messageObserver = new MessageObserver(clientInformation.User.UserID);
             var blackHole = new UndefinedResolver();
             var routes = _userObserver.Compose(_messageObserver, blackHole);
             _mainFormObserver = new UDPObserver(_availablePort, new BinarySerializerService(), WindowsFormsSynchronizationContext.Current, routes);
