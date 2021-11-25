@@ -109,6 +109,8 @@
     <Compile Include="DB\ChatDb.cs" />
     <Compile Include="DB\Message.cs" />
     <Compile Include="DB\User.cs" />
+    <Compile Include="DI\AuthFactory.cs" />
+    <Compile Include="DI\MainFormFactory.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

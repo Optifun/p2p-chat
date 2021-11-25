@@ -161,6 +161,7 @@
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "AuthForm";
 			this.Text = "Auth";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AuthForm_FormClosing);
 			this.Load += new System.EventHandler(this.AuthForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
